@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiTHOS · SAiRA — Agent-First Mockup (Phase 1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#04173F;--navy-2:#0a2150;--ink:#0d2547;--ink-soft:#4a5e7e;--ink-faint:#8294b0;
+    --paper:#ffffff;--mist:#f6fafd;--line:#e4ecf4;
+    --teal:#3dd6c4;--teal-deep:#1ba898;--teal-ink:#0d6b60;--teal-tint:#e2f7f3;
+    --gold:#caa45a;--amber-tint:#fbf0d8;--amber-ink:#8a6418;
+    --radius:16px;--radius-sm:10px;--shadow:0 1px 2px rgba(4,23,63,.05),0 8px 26px rgba(4,23,63,.07);
+    --serif:'Cormorant Garamond',Georgia,serif;--body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  .topbar{position:sticky;top:0;z-index:20;background:var(--navy);border-bottom:1px solid #16315f}
+  .topbar .inner{max-width:100%;margin:0;padding:13px 28px;display:flex;align-items:center;gap:18px}
+  .topbar .toggle{margin:0 auto}
+  .logo{height:64px;width:auto;display:block}
+  .toggle{display:flex;gap:3px;background:#0c2350;border:1px solid #1c386a;border-radius:999px;padding:4px}
+  .toggle button{font-family:var(--body);font-size:13px;font-weight:500;color:#9fb6d6;background:none;border:none;padding:7px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+  .toggle button.on{background:var(--teal);color:var(--navy)}
+  .badge{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#7990b4;font-weight:600}
+  .view{display:none}.view.show{display:block}
+
+  /* SAiRA identity */
+  .saira-orb{width:40px;height:40px;border-radius:50%;flex:none;background:#04173F url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4OCA4OCI+CiAgPGRlZnM+PGNsaXBQYXRoIGlkPSJjIj48Y2lyY2xlIGN4PSI0NCIgY3k9IjQ0IiByPSI0NCIvPjwvY2xpcFBhdGg+PC9kZWZzPgogIDxnIGNsaXAtcGF0aD0idXJsKCNjKSI+CiAgICA8cmVjdCB3aWR0aD0iODgiIGhlaWdodD0iODgiIGZpbGw9IiMwYTIxNTAiLz4KICAgIDxwYXRoIGQ9Ik0wIDMwIEE1MiA1MiAwIDAgMSA4OCAzMCBMODggODggTDAgODggWiIgZmlsbD0iIzA0MTczRiIvPgogICAgPHBhdGggZD0iTTAgMzAgQTUyIDUyIDAgMCAxIDg4IDMwIiBmaWxsPSJub25lIiBzdHJva2U9IiM1ZGNhYTUiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iNDQiIGN5PSIxNyIgcj0iMy41IiBmaWxsPSIjZmZmZmZmIi8+CiAgICA8Y2lyY2xlIGN4PSI0NCIgY3k9IjE3IiByPSI5IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjIyIi8+CiAgICA8bGluZSB4MT0iNDQiIHkxPSI2IiB4Mj0iNDQiIHkyPSIyOCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjAuOCIgb3BhY2l0eT0iMC41Ii8+CiAgICA8bGluZSB4MT0iMzMiIHkxPSIxNyIgeDI9IjU1IiB5Mj0iMTciIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIwLjgiIG9wYWNpdHk9IjAuNSIvPgogIDwvZz4KPC9zdmc+Cg==") center/cover no-repeat;position:relative;box-shadow:0 0 0 4px rgba(61,214,196,.14)}
+  .saira-orb.lg{width:52px;height:52px}
+  .saira-orb.sm{width:30px;height:30px;box-shadow:0 0 0 3px rgba(61,214,196,.14)}
+
+  /* conversational stream */
+  .stream{padding:26px 0 60px}
+  .daybar{display:flex;align-items:center;gap:10px;margin:6px 0 22px;color:var(--ink-faint);font-size:12px;letter-spacing:.04em}
+  .daybar:before,.daybar:after{content:"";height:1px;background:var(--line);flex:1}
+
+  .turn{display:flex;gap:14px;margin-bottom:22px;align-items:flex-start}
+  .turn .who{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:52px}
+  .turn .who small{font-size:10px;color:var(--ink-faint);font-weight:500}
+  .turn .body{flex:1;padding-top:2px}
+  .turn .body .name{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+  .turn .body .name .t{font-size:11px;color:var(--ink-faint);font-weight:400}
+  .bubble{background:var(--paper);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:15px 18px;box-shadow:var(--shadow);font-size:14.5px;color:var(--ink);line-height:1.6}
+  .bubble.saira{background:linear-gradient(168deg,#082a55,#0c2350);border:none;color:#e7f1fb;border-radius:4px 14px 14px 14px}
+  .bubble.saira b{color:#fff}
+  .bubble p+p{margin-top:10px}
+  .bubble .lead{font-family:var(--serif);font-size:21px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:8px}
+
+  /* prioritized action chips inside SAiRA */
+  .prios{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+  .prio{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:11px 13px}
+  .prio .rank{width:22px;height:22px;border-radius:6px;background:var(--teal);color:var(--navy);font-weight:600;font-size:12px;display:grid;place-items:center;flex:none}
+  .prio .ptxt{flex:1;font-size:13.5px;color:#dce8f7}
+  .prio .ptxt b{color:#fff;font-weight:600}
+  .prio .why{font-size:11.5px;color:#9fc7d8;margin-top:1px}
+  .prio .act{flex:none;font-size:12px;font-weight:500;color:var(--navy);background:var(--teal);border:none;border-radius:7px;padding:7px 12px;cursor:pointer}
+  .prio.flag{border-color:rgba(202,164,90,.4)}
+  .prio.flag .rank{background:var(--gold)}
+
+  /* inline structured view the agent "summons" */
+  .summon{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .summon .sh{padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:8px;background:var(--mist)}
+  .summon .sh svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  table{width:100%;border-collapse:collapse}
+  .summon td{padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .summon tr:last-child td{border-bottom:none}
+  .inst{font-weight:500;color:var(--ink)}.itype{font-size:11px;color:var(--ink-faint)}
+  .st{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;display:inline-block}
+  .st-req{background:#e7eefb;color:#27508c}.st-fu{background:var(--amber-tint);color:var(--amber-ink)}
+  .st-rc{background:var(--teal-tint);color:var(--teal-ink)}
+
+  /* gate / review moment — dashboard earns its place */
+  .gate{margin-top:14px;background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:12px;padding:15px 17px}
+  .gate .gh{font-size:13px;font-weight:600;color:var(--teal-ink);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .gate .gh svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .gate p{font-size:13px;color:#176055;line-height:1.5}
+  .gate .gact{margin-top:11px;display:flex;gap:9px}
+  .gate .gact button{font-size:12.5px;font-weight:500;border-radius:8px;padding:8px 14px;cursor:pointer;border:none}
+  .gate .approve{background:var(--teal-deep);color:#fff}
+  .gate .open{background:#fff;color:var(--teal-ink);border:1px solid #bfe9e0}
+
+  /* composer */
+  .composer{background:var(--mist);padding:22px 0 10px;margin-top:8px}
+  .composer .box{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:8px 8px 8px 16px;box-shadow:var(--shadow)}
+  .composer input{flex:1;border:none;outline:none;font-family:var(--body);font-size:14px;color:var(--ink);background:none}
+  .composer .send{width:38px;height:38px;border-radius:9px;background:var(--teal);border:none;display:grid;place-items:center;cursor:pointer;flex:none}
+  .composer .send svg{width:17px;height:17px;stroke:var(--navy)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chips button{font-size:12px;color:var(--teal-ink);background:var(--teal-tint);border:none;border-radius:999px;padding:7px 13px;cursor:pointer}
+
+  /* patient hero */
+  .phero{background:var(--navy);color:#eaf1fb;padding:30px 0;position:relative;overflow:hidden;text-align:center}
+  .phero:before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:520px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(61,214,196,.13),transparent 64%)}
+  .phero .inner{position:relative;z-index:2}
+  .phero h1{font-family:var(--serif);font-weight:600;font-size:30px;color:#fff;line-height:1.05}
+  .phero h1 em{font-style:italic;color:var(--teal)}
+  .phero p{margin-top:8px;font-size:14px;color:#bccbe2}
+
+  .disclaim{text-align:center;font-size:11px;color:var(--ink-faint);max-width:60ch;margin:8px auto 0;padding-bottom:30px;line-height:1.5}
+  .footnote{text-align:center;font-size:11px;color:var(--ink-faint);padding:6px 0 0}
+
+  @media(max-width:600px){
+    .wrap{padding:0 14px}
+    .topbar .inner{padding:11px 14px;flex-wrap:wrap;gap:10px}
+    .logo{height:48px}.badge{display:none}
+    .toggle{order:3;width:100%;justify-content:center;flex-wrap:wrap}
+    .turn .who{width:42px}
+    .prio{flex-wrap:wrap}.prio .act{margin-left:44px}
+    .gate .gact{flex-direction:column}
+    .adminhead{flex-direction:column;align-items:flex-start;gap:12px}
+    .scope-grid{grid-template-columns:1fr}
+    .adminact{flex-direction:column}
+    .spon-metrics{grid-template-columns:1fr 1fr}
+    .spon-cols{grid-template-columns:1fr}
+    .sponhead{flex-direction:column}.sponhead .org{text-align:left}
+    .frow .fl{width:96px}
+    .tbrow .tbl{width:92px}
+    .ctactions{flex-direction:column}
+  }
+  /* hospital admin view */
+  .adminwrap{max-width:680px;margin:0 auto;padding:30px 24px 60px}
+  .adminhead{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .adminhead .from{display:flex;align-items:center;gap:12px}
+  .adminhead .from small{display:block;font-size:11px;color:var(--ink-faint);letter-spacing:.04em}
+  .adminhead .from b{font-size:15px;color:var(--ink);font-weight:600}
+  .invite{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-top:6px}
+  .invite .ih{background:linear-gradient(168deg,#082a55,#0c2350);color:#e7f1fb;padding:22px 24px}
+  .invite .ih .tagline{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+  .invite .ih h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.12}
+  .invite .ih p{font-size:13.5px;color:#bccbe2;margin-top:8px;line-height:1.55}
+  .invite .ih p b{color:#fff}
+  .ibody{padding:22px 24px}
+  .rowline{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .rowline:last-of-type{border-bottom:none}
+  .rowline .k{color:var(--ink-faint)}
+  .rowline .v{color:var(--ink);font-weight:500;text-align:right}
+  .verified{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--teal-ink);background:var(--teal-tint);padding:4px 11px;border-radius:999px}
+  .verified svg{width:13px;height:13px;stroke:var(--teal-deep)}
+  .scopebox{margin-top:18px;background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .scopebox h3{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .scopebox h3 svg{width:15px;height:15px;stroke:var(--teal-deep)}
+  .scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .scopeitem{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--ink-soft)}
+  .scopeitem svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  .scopeitem b{color:var(--ink);font-weight:500}
+  .whatbox{margin-top:16px}
+  .whatbox .wl{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+  .reqtags{display:flex;flex-wrap:wrap;gap:8px}
+  .reqtag{font-size:12.5px;color:var(--ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:7px}
+  .reqtag svg{width:13px;height:13px;stroke:var(--teal-deep)}
+  .daterange{font-size:12.5px;color:var(--ink-soft);margin-top:10px}
+  .daterange b{color:var(--ink);font-weight:500}
+  .adminact{display:flex;gap:11px;margin-top:22px}
+  .adminact button{font-size:14px;font-weight:500;border-radius:10px;padding:13px 20px;cursor:pointer;border:none;flex:1}
+  .adminact .deliver{background:var(--teal);color:var(--navy);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .adminact .deliver svg{width:17px;height:17px;stroke:var(--navy)}
+  .adminact .decline{background:#fff;color:var(--ink-soft);border:1px solid var(--line);flex:0 0 auto}
+  .securenote{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.5}
+  .securenote svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* sponsor view */
+  .sponwrap{max-width:860px;margin:0 auto;padding:28px 24px 56px}
+  .sponhead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+  .sponhead .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-deep);font-weight:600;margin-bottom:8px}
+  .sponhead h1{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.08}
+  .sponhead .sub{font-size:13.5px;color:var(--ink-soft);margin-top:5px;max-width:52ch}
+  .sponhead .org{flex:none;text-align:right;font-size:12.5px}
+  .sponhead .org small{display:block;color:var(--ink-faint);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+  .sponhead .org b{font-size:15px;color:var(--ink)}
+  .boundary-banner{display:flex;gap:11px;align-items:center;background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:12px;padding:13px 16px;margin:16px 0 22px;font-size:12.5px;color:var(--teal-ink);font-weight:500}
+  .boundary-banner svg{width:18px;height:18px;flex:none;stroke:var(--teal-deep)}
+  .spon-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+  .smetric{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 17px;box-shadow:var(--shadow)}
+  .smetric .k{font-size:12px;color:var(--ink-faint)}
+  .smetric .v{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);margin-top:3px}
+  .smetric .d{font-size:11.5px;color:var(--teal-ink);margin-top:3px;font-weight:500}
+  .spon-cols{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+  .scard{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .scard .sch{padding:15px 18px;border-bottom:1px solid var(--line);font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
+  .scard .sch .agtag{font-family:var(--body);font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-ink);background:var(--teal-tint);padding:4px 10px;border-radius:999px}
+  .scard .scb{padding:18px}
+  /* engagement funnel */
+  .funnel{display:flex;flex-direction:column;gap:11px}
+  .frow{display:flex;align-items:center;gap:12px}
+  .frow .fl{font-size:13px;color:var(--ink-soft);width:130px;flex:none}
+  .frow .fbar{flex:1;height:26px;background:var(--mist);border-radius:6px;overflow:hidden;position:relative}
+  .frow .fbar span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .frow .fv{font-size:13px;font-weight:600;color:var(--ink);width:46px;text-align:right;flex:none}
+  .consent-note{font-size:11.5px;color:var(--ink-faint);margin-top:13px;display:flex;gap:8px;align-items:flex-start}
+  .consent-note svg{width:14px;height:14px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* fund / value return */
+  .trialnums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .tn{background:var(--mist);border:1px solid var(--line);border-radius:10px;padding:13px 12px;text-align:center}
+  .tn .tnv{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1}
+  .tn .tnl{font-size:10.5px;color:var(--ink-soft);margin-top:5px;line-height:1.3}
+  .trialbar{display:flex;flex-direction:column;gap:9px}
+  .tbrow{display:flex;align-items:center;gap:11px}
+  .tbrow .tbl{font-size:12px;color:var(--ink-soft);width:118px;flex:none}
+  .tbrow .tbbar{flex:1;height:22px;background:var(--mist);border-radius:6px;overflow:hidden;position:relative}
+  .tbrow .tbbar span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .tbrow .tbv{font-size:13px;font-weight:600;color:var(--ink);width:34px;text-align:right;flex:none}
+  /* funnel conversion rates */
+  .frow .fconv{font-size:10.5px;color:var(--teal-ink);width:42px;text-align:right;flex:none;font-weight:600}
+  .dropoff{display:flex;gap:8px;align-items:flex-start;background:var(--amber-tint);border-radius:9px;padding:10px 13px;margin-top:12px;font-size:12px;color:var(--amber-ink);line-height:1.45}
+  .dropoff svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--amber-ink)}
+  /* enrollment trend chart */
+  .trendwrap{margin:4px 0 14px}
+  .trendwrap .tcap{font-size:11.5px;color:var(--ink-soft);margin-bottom:8px;display:flex;justify-content:space-between}
+  .trendwrap .tcap b{color:var(--ink)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:14px;height:0;border-top-width:2px;border-top-style:solid;display:inline-block}
+  /* governance panel */
+  .gov{margin-top:16px;background:var(--navy);border-radius:12px;padding:16px 18px;color:#cfe0f3}
+  .gov h3{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+  .gov h3 svg{width:15px;height:15px;stroke:var(--teal)}
+  .gov-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .govitem{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.4}
+  .govitem svg{width:14px;height:14px;flex:none;margin-top:1px;stroke:var(--teal)}
+  .govitem b{color:#fff;font-weight:600}
+  .gov .ref{margin-top:11px;font-size:10.5px;color:#8aa6cc;border-top:1px solid #16315f;padding-top:9px}
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .toolbar .seg{display:flex;gap:2px;background:#eef2f8;border:1px solid var(--line);border-radius:8px;padding:3px}
+  .toolbar .seg button{font-family:var(--body);font-size:12px;color:var(--ink-soft);background:none;border:none;padding:6px 12px;border-radius:6px;cursor:pointer}
+  .toolbar .seg button.on{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(4,23,63,.08)}
+  .toolbar .exp{margin-left:auto;font-size:12px;font-weight:500;color:var(--teal-ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:8px;padding:7px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .toolbar .exp svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  .suppress{font-size:11px;color:var(--ink-faint);font-style:italic;margin-top:8px}
+  /* report modal */
+  .rmodal{position:fixed;inset:0;background:rgba(4,23,63,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px}
+  .rmbox{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:84vh;overflow-y:auto;padding:28px;position:relative;box-shadow:0 24px 60px rgba(4,23,63,.3)}
+  .rmclose{position:absolute;top:16px;right:16px;background:var(--paper);border:1px solid var(--line);border-radius:8px;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--ink-soft)}
+  .rmclose svg{width:16px;height:16px;stroke:currentColor}
+  .rmbox h2{font-family:var(--serif);font-size:24px;color:var(--ink);font-weight:600;margin-bottom:4px}
+  .rmsub{font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.5}
+  .bardist .bd-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:8px}
+  .bdrow{display:flex;align-items:center;gap:11px;margin-bottom:8px}
+  .bdrow .bl{font-size:12.5px;color:var(--ink-soft);width:70px;flex:none}
+  .bdrow .bbar{flex:1;height:20px;background:var(--mist);border-radius:6px;overflow:hidden}
+  .bdrow .bbar span{display:block;height:100%;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .bdrow .bv{font-size:12.5px;font-weight:600;color:var(--ink);width:64px;text-align:right;flex:none}
+  .govitem.dark{color:var(--ink-soft)}
+  .govitem.dark svg{stroke:var(--teal-deep)}
+  .govitem.dark b{color:var(--ink)}
+  .auth-act{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px;border-radius:10px;border:none;background:var(--teal-deep);color:#fff;font-family:var(--body);font-size:14px;font-weight:600;cursor:pointer}
+  .auth-act svg{width:17px;height:17px;stroke:#fff}
+  .sponhero .spon-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:10px}
+  .sponhero .spon-org{margin-top:14px;font-size:13px;color:#9fc7d8}
+  .sponhero .spon-org b{color:#fff;font-weight:600}
+  .defs{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .defrow{display:flex;gap:10px;font-size:11.5px;line-height:1.45;margin-bottom:7px}
+  .defrow b{flex:none;width:108px;color:var(--ink);font-weight:600}
+  .defrow span{color:var(--ink-soft)}
+  .nodata{display:flex;gap:9px;align-items:flex-start;background:var(--mist);border-radius:10px;padding:13px 15px;margin-top:16px;font-size:12px;color:var(--ink-soft);line-height:1.5}
+  .nodata svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* patient document sidebar (Claude-style) */
+  .pshell{display:grid;grid-template-columns:1fr 208px;gap:0;max-width:980px;margin:0 auto;position:relative}
+  .docrail{padding:24px 20px 24px 22px;border-left:1px solid var(--line);order:2}
+  .docrail .rl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:10px}
+  .docitem{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.15s}
+  .docitem:hover{background:var(--paper);border-color:var(--line)}
+  .docitem .di{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex:none}
+  .docitem .di svg{width:14px;height:14px}
+  .docitem .dt{flex:1;min-width:0}
+  .docitem .dt b{display:block;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .docitem .dt small{font-size:10px;color:var(--ink-faint)}
+  .di-graph{background:linear-gradient(135deg,#06204e,#0c3268)}.di-graph svg{stroke:var(--teal)}
+  .di-auth{background:var(--teal-tint)}.di-auth svg{stroke:var(--teal-deep)}
+  .di-fid{background:var(--teal-tint)}.di-fid svg{stroke:var(--teal-deep)}
+  .di-prog{background:#eef4fb}.di-prog svg{stroke:#3a78c2}
+  .docrail .railnote{margin-top:13px;padding:10px 9px 0;font-size:10.5px;color:var(--ink-faint);line-height:1.5;border-top:1px solid var(--line)}
+  .docrail .own{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--teal-ink);margin-bottom:6px}
+  .docrail .own svg{width:12px;height:12px;stroke:var(--teal-deep)}
+  .pstreamcol{min-width:0;padding-right:26px;order:1}
+  .railhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .railclose{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:4px;border-radius:6px;display:grid;place-items:center;transition:.15s}
+  .railclose:hover{background:var(--paper);color:var(--ink)}
+  .railclose svg{width:16px;height:16px;stroke:currentColor}
+  .railopen{display:none;position:absolute;top:18px;right:22px;z-index:5;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:500;color:var(--ink);box-shadow:var(--shadow)}
+  .railopen svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .railopen:hover{border-color:var(--teal)}
+  /* collapsed state */
+  .pshell.railhidden{grid-template-columns:1fr;position:relative}
+  .pshell.railhidden .docrail{display:none}
+  .pshell.railhidden .railopen{display:inline-flex}
+  .pshell.railhidden .pstreamcol{padding-right:0}
+  /* concierge subject rail (left, mirrors Assets) */
+  .cshell{display:grid;grid-template-columns:208px 1fr;gap:0;max-width:980px;margin:0 auto;position:relative}
+  .subjrail{padding:24px 22px 24px 20px;border-right:1px solid var(--line)}
+  .railhead2{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .railhead2 .rl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  .railclose2{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:4px;border-radius:6px;display:grid;place-items:center;transition:.15s}
+  .railclose2:hover{background:var(--paper);color:var(--ink)}
+  .railclose2 svg{width:16px;height:16px;stroke:currentColor}
+  .subjitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.15s}
+  .subjitem:hover{background:var(--paper);border-color:var(--line)}
+  .subjitem.on{background:var(--paper);border-color:var(--teal)}
+  .subjitem .sc{width:30px;height:30px;border-radius:8px;background:#eef4fb;display:grid;place-items:center;flex:none;font-size:11px;font-weight:600;color:var(--navy)}
+  .subjitem.on .sc{background:var(--navy);color:#fff}
+  .subjitem .sd{flex:1;min-width:0}
+  .subjitem .sd b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+  .subjitem .sd small{font-size:10.5px;color:var(--ink-faint)}
+  .subjitem .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot-fu{background:var(--gold)}.dot-ok{background:var(--teal-deep)}.dot-due{background:#d98f8f}
+  .subjrail .railnote2{margin-top:13px;padding:10px 9px 0;font-size:10.5px;color:var(--ink-faint);line-height:1.5;border-top:1px solid var(--line)}
+  .subjrail .newbtn{display:flex;align-items:center;gap:7px;width:100%;margin-top:10px;padding:9px 10px;border:1px dashed var(--teal);background:var(--teal-tint);border-radius:9px;cursor:pointer;font-family:var(--body);font-size:12px;font-weight:500;color:var(--teal-ink)}
+  .subjrail .newbtn svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  .cstreamcol{min-width:0;padding-left:26px}
+  .subjopen{display:none;position:absolute;top:18px;left:0;z-index:5;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:500;color:var(--ink);box-shadow:var(--shadow)}
+  .subjopen svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .subjopen:hover{border-color:var(--teal)}
+  .cshell.subjhidden{grid-template-columns:1fr}
+  .cshell.subjhidden .subjrail{display:none}
+  .cshell.subjhidden .subjopen{display:inline-flex}
+  .cshell.subjhidden .cstreamcol{padding-left:0}
+  @media(max-width:780px){
+    .cshell{grid-template-columns:1fr}
+    .subjrail{border-right:none;border-bottom:1px solid var(--line);padding:16px}
+    .subjrail .subjitem{display:inline-flex;width:auto;margin-right:8px}
+    .subjrail .subjitems{display:flex;flex-wrap:wrap;gap:0}
+    .subjrail .railnote2{display:none}
+    .cstreamcol{padding-left:0}
+    .cshell.subjhidden .subjopen{position:static;display:inline-flex;margin:14px 16px 0;top:auto;left:auto;order:0}
+  }
+  /* collapsible rail */
+  .pshell.railclosed{grid-template-columns:1fr}
+  .pshell.railclosed .docrail{display:none}
+  .pshell.railclosed .pstreamcol{padding-right:0}
+  .railtoggle{display:inline-flex;align-items:center;gap:7px;font-family:var(--body);font-size:12.5px;font-weight:500;color:var(--teal-ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:999px;padding:7px 14px;cursor:pointer;margin-bottom:14px}
+  .railtoggle svg{width:15px;height:15px;stroke:var(--teal-deep)}
+  @media(max-width:780px){
+    .pshell{grid-template-columns:1fr}
+    .docrail{border-left:none;border-top:1px solid var(--line);padding:18px 16px;order:2}
+    .docrail .docitem{display:inline-flex;width:auto;margin-right:8px}
+    .docrail .docitems{display:flex;flex-wrap:wrap;gap:0}
+    .docrail .railnote{display:none}
+    .pstreamcol{padding-right:0;order:1}
+    .pshell.railhidden .railopen{position:static;display:inline-flex;margin:14px 16px 0 auto;top:auto;right:auto;order:0}
+  }
+  /* care team view */
+  .ctwrap{max-width:680px;margin:0 auto;padding:30px 24px 56px}
+  .ctlede{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+  .ctlede .saira-orb{flex:none}
+  .ctlede small{display:block;font-size:11px;color:var(--ink-faint);letter-spacing:.04em}
+  .ctlede b{font-size:15px;color:var(--ink)}
+  .ctmsg{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .ctmsg .cth{background:var(--mist);border-bottom:1px solid var(--line);padding:14px 20px;font-size:12.5px;color:var(--ink-soft)}
+  .ctmsg .cth b{color:var(--ink);font-weight:600}
+  .ctmsg .ctbody{padding:22px 24px}
+  .ctmsg .ctbody h2{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink);line-height:1.2;margin-bottom:12px}
+  .ctmsg .ctbody p{font-size:14px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px}
+  .ctmsg .ctbody p b{color:var(--ink);font-weight:500}
+  .ctpatient{display:flex;align-items:center;gap:11px;background:var(--mist);border-radius:11px;padding:13px 15px;margin-bottom:16px}
+  .ctpatient .pid{width:38px;height:38px;border-radius:9px;background:var(--navy);color:var(--teal);display:grid;place-items:center;font-weight:600;font-size:13px;flex:none}
+  .ctpatient .pn b{font-size:14px;color:var(--ink)}
+  .ctpatient .pn small{display:block;font-size:11.5px;color:var(--ink-faint)}
+  .ctclaim{background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:11px;padding:14px 16px;margin:4px 0 16px}
+  .ctclaim .cl{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+  .ctclaim p{font-size:13.5px;color:#176055;margin:0;line-height:1.5}
+  .ctmaterial{border:1px solid var(--line);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .ctmaterial svg{width:20px;height:20px;stroke:var(--teal-deep);flex:none}
+  .ctmaterial .mt{font-size:13.5px;font-weight:500;color:var(--ink)}
+  .ctmaterial .ms{font-size:11.5px;color:var(--ink-faint)}
+  .ctmaterial .view{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--teal-deep);flex:none}
+  .ctguard{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:12px;color:var(--ink-faint);line-height:1.5}
+  .ctguard svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  .ctactions{display:flex;gap:11px;margin-top:20px}
+  .ctactions button{font-size:13.5px;font-weight:500;border-radius:9px;padding:11px 18px;cursor:pointer;border:none}
+  .ctactions .ack{background:var(--teal);color:var(--navy)}
+  .ctactions .msg{background:#fff;color:var(--ink-soft);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <img class="logo" src="data:image/png;base64,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xHErW3HZZZcPDxek3Ojhe+cV3t/4xjez2Rof2FBxTwXZFStW7N69W1LOFult0KuTX/SiF8ET4FBGpTTs6vf58+dv2LAh3Zj03uttrC9+8Uuw3Itietvjb75q1aqdO3dKwjr5XURJuYYo4iuvfKW+l6M5YUhd6l71qteknX8rmqTN/PWvf9vY2IhPoApbhW7K2zahPGlQU1PTRRdd9LGPfexPf/pTb2+vH6VEUJNiMfK8kgoE3kLt7df6k34vFqN8vujliXSnenv777nnvs997gsvfOEls2bNVuOM72DFgk3nZByfvfJUkf1IvxoTtLfPueii/3X11e/55je/de+9f+3o6PKm1DQjrLKFlpn1nfX99aZzLxh5lxK9UP/8m/XmmmIx2rVrz3//90+uuurqCy64IJvNek4/LR36LlTIAaPSmBwlIp599tn333//8PCwjlqySTIAqBamo6Pje9/7HiTaCkxCu6Bcy3t8yTMsv/rVr770pS9dcMEFxWLRq2Occ2rPoSTYs7W1dc6cOTt37vRsI6R0bbrACoXC73//+zlz5miSTW+sICIRDIJgaGgoiqLt27crSk6jmlKS9DPaEiI6fPjwrbfeum/fPuecjxXzgGitLRQKxhgVi3z9NZlWZp+S/IDGmEOHDv3+979fsGCBZm+SMgUlWptRtkILziCiyFGZJMp6aIqEvXv33nLLLT5MS7PnUhzWFjfsvvvu6+vrS8/kyT7OTxVJYqshCa1TENSl2Nvb++c///m22277whe+sHz58vPPP//ss89evXr14sWL29racrmaVAktTeyPIpCux6evTmsBiCjrpEVWoFiMDhw4sH///k2bNj344IN33333pk2buru7IVE+Yiqrf3rBAoAPEIKU6nl8SscvQgzBxjl38ODBgwcP3nbbbURUV1c3f/78VatWrVy5ctWqVYsXL9baYa2trb6n2hEiVJZZ+6vDpaYYb6DTeV3OWUMUcVdXV0dHx7Zt29atW/fII4/cc889Bw4cUN8GSjKDpLP8+Gb7g+P3d1ITQjeN4499U6WJMlPlIDK5/nqvdZlWS+6UqKy/J0B7AErjc1SyCI9BaY61cgSO8fvySxTLS8fU19cvWrRo4cKFS5cuX7JkyZIlSxoaGmbOnDl37ly/kbukFhAiBkEQRdGhQ4e6uzsHBgb2799/4MCBnTt3Pv7449u2bdu/f39/f/+oDTg2wz5ylfnnZjKZGTNmzJkzZ86cOa2traecckpjY2NLS0tjY2NTU1Nra2tDQ4PmJIcUg+JpaGho165dYRgODw93dHQcPnx4165du3bt2r59+969ezs6OiDFGyk/MS29rgJlJY0Y0ypQTic9zYESyj0BKMmX6jmyJG+hIaKWlpa2tjbvbiVJhh4AUMlgYGCgp+dQGIaDg4MV7hBjzfNjNuwVDUir9dPnaKc0dUUul2toaKirq1PeH0YAJQDk8/lDhw4xs1bRGSkbVQxphY1h6t15gtc/bWlswE3nazp2wDSWpk89BE+k9sgxhMgSnVDjM3J5J2Im++3NnzASWSCFO4glew4mmdNOBJXXOJQoPdIl8EaZFekl5n/1crReov/UvaHcq2+afROrQDntNB7/cjzoRGvPiUbHbXzG0ONT+rg3vKTRIW1Acy6sQIQTxzxQQaMiVxr6R0XGkee7JDEwJWULTKo6vJrjPEc5bY2fxntVCQCO18IbW9RKHz8R2nN8PMZOtPHx5jh/JM0S+uNpyXEk0Ey7Ue5YUrlSqPKn8fs1MkJpVCezaRyfKlBOO51oHNyJ1p4TjY7z+IylRKtgtdJGiQotZxpbT1joHGlXGckIw7iMpP8+qtbC29/Tl0yjnqcKlNNOVY4SoMpRHolGXflpNnMkyzmRu52YQneavF4SRmQH9yfAuIg5kZ9GspwnKj1NEbgiu0lCOMbnsW5SlUbS0RqfSb3hClYofcSkKgyreK7fK8LvRr32xKGRxrS0pxSWHxyfKpLRpG+AiGOsLxrxOTkarVlTG2QpfzwCxGjOk7rf0d8CJj1Mo7Z/vHbiZLZ0Sd//yG070viMUNNMsr8yWa5q/LcrJz46T25+Tnz+EAAfaTxHPlqARj2uACDl718AAHhyC3YCCyx9Pxmlv9NvJKExbjoG6wggqc9Rfy3dwoMjl3+ORaP/NHmgHFfHOvazJ97QY0EIJKO3apR2lgMZw+jXponTTzoCTQYopeLmE6aKqTXO51RuPV6LR+3RBEc++UQGOTqfyWBOfHyO+Fk5AJMZPI24Sf86/v1LQDmtb9c/JXXF0Vq5I3s0envL/z3mOWX3Gn81TdY/uryVR75gPFSopNR2dCSg9FxYDByjLxsZAUw4pTc3wRd+hAEZbVmMysGNe5/xGzLaYE+B5Z/yQp/InY8mIY7e1vG1T5ODjmmEyZGtmgLbkQaqiYHdZFo3KR5/YvNt7FZN4Drfngltiphck8IRGnFPJUpqtU6IcLyuTFIuG4mSRzo/NdCVnwQIgPoJsZJIKlVFEn+S/xx5gpSdOd7nRGiU8ycHHwzABOA/AQCBMfmE8s+J3C35MoXGJDT6Kxjt8wQj1ciP/ByLcDJ9xfRl0/VZ8TdZwhHfR96//JRJtpFjpmT8zyPOTL9Oxn4XR1yb5UQACRs4FjMoBEAEZZ+JglmVoBouTlMe/rHo/we3d0VDMeErqwAAAABJRU5ErkJggg==" alt="AiTHOS Sovereign Health">
+  <div class="toggle">
+    <button id="t-patient" class="on" onclick="show('patient')">Patient</button>
+    <button id="t-concierge" onclick="show('concierge')">Concierge</button>
+    <button id="t-admin" onclick="show('admin')">Administrator</button>
+    <button id="t-careteam" onclick="show('careteam')">Care Team</button>
+    <button id="t-sponsor" onclick="show('sponsor')">Sponsor</button>
+  </div>
+  <span class="badge">Agentic · Phase 1</span>
+</div></div>
+
+<!-- ===================== PATIENT ===================== -->
+<section id="patient" class="view show">
+  <div class="phero"><div class="wrap inner">
+    <h1>The health system built around <em>you.</em></h1>
+    <p>A trusted way to organize your healthcare.</p>
+  </div></div>
+  <div class="pshell railhidden" id="pshell">
+    <aside class="docrail" id="docrail">
+      <div class="railhead">
+        <div class="rl">Assets</div>
+        <button class="railclose" id="railclose" aria-label="Hide assets" onclick="toggleRail()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="docitems">
+        <div class="docitem"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="3,17 9,11 13,15 21,6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Healthograph</b><small>Your health signature</small></span></div>
+        <div class="docitem"><span class="di di-auth"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/><path d="M11 13h5M11 17h5" stroke-linecap="round"/></svg></span><span class="dt"><b>Authorization</b><small>Signed · § 164.524</small></span></div>
+        <div class="docitem"><span class="di di-fid"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Fiduciary Agreement</b><small>Signed</small></span></div>
+        <div class="docitem"><span class="di di-prog"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8" stroke-linecap="round"/></svg></span><span class="dt"><b>RPT program</b><small>Active · you opted in</small></span></div>
+      </div>
+      <div class="railnote">Download or share any of these anytime. They stay yours, even if you leave.</div>
+    </aside>
+    <button class="railopen" id="railopen" aria-label="Show assets" onclick="toggleRail()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Assets</span></button>
+    <div class="pstreamcol">
+    <div class="wrap stream" style="padding:0">
+      <div class="daybar">Today</div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">your AiTHOS guide · 8:02a</span></div>
+        <div class="bubble saira">
+          <div class="lead">Good morning. Here's where your Healthograph stands.</div>
+          <p>We've gathered records from <b>1 of your 4</b> places so far. I'm following up with the lab that's running late — you don't need to do anything there.</p>
+          <p>There's <b>one thing that would help me</b>, whenever you have a moment:</p>
+          <div class="prios">
+            <div class="prio"><span class="rank">1</span><div class="ptxt"><b>Choose who can see your Healthograph</b><div class="why">You mentioned wanting your cardiologist to have it — I can set that up once you confirm.</div></div><button class="act">Choose</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><img src="data:image/jpeg;base64,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" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--teal)"><small>Chandler</small></div>
+      <div class="body">
+        <div class="name">Chandler Schwede <span class="t">your concierge · 8:15a</span></div>
+        <div class="bubble">I'm here if anything feels unclear — just message me. SAiRA handles the gathering; I make sure it's right and answer your questions along the way.</div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">8:16a</span></div>
+        <div class="bubble saira">
+          <p>Here's your gathering, anytime you want to see it:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14" stroke-linejoin="round"/></svg>Your records</div>
+            <table><tbody>
+              <tr><td><span class="inst">Regional Medical Center</span><br><span class="itype">Hospital</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Bayside Family Practice</span><br><span class="itype">Primary care</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+              <tr><td><span class="inst">Meridian Diagnostics Lab</span><br><span class="itype">Laboratory</span></td><td style="text-align:right"><span class="st st-fu">Following up</span></td></tr>
+              <tr><td><span class="inst">Cedar Imaging Center</span><br><span class="itype">Imaging</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">8:18a · asking first</span></div>
+        <div class="bubble saira">
+          <p>One more thing, and it's entirely your choice. There's a heart-failure education program — the <b>RPT program, sponsored by Ancora Heart</b> — that's relevant to people managing a condition like yours. It helps you understand the range of treatment approaches and prepare questions for your cardiologist.</p>
+          <p>To be clear about what it is and isn't: it gives you <b>things to discuss with your care team</b> — it doesn't tell you what to do, and I won't either. Your team makes the medical calls. And the sponsor never sees your name or your records — only whether people find the program helpful, in aggregate.</p>
+          <div class="prios">
+            <div class="prio"><span class="rank" style="background:#fff;color:var(--teal-deep)">?</span><div class="ptxt"><b>Add the RPT program to your Healthograph?</b><div class="why">Education and questions to bring to your doctor. Turn it off anytime.</div></div><button class="act">Yes, add it</button></div>
+            <div class="prio"><span class="rank" style="background:#fff;color:var(--teal-deep)">+</span><div class="ptxt"><b>Also let your care team know you're interested?</b><div class="why">Separate choice. I'd tell your cardiologist you'd like to learn more — they decide what's right. You'll see exactly what I send.</div></div><button class="act">Sure</button></div>
+          </div>
+          <p style="font-size:12px;color:#9fc7d8;margin-top:11px">Either is optional. You can add the program without telling your team, or skip both — it changes nothing else about your care.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA or message Chandler…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="chips"><button>Where are my records?</button><button>What's a Healthograph?</button><button>Add a place I've been</button></div>
+    </div>
+    <p class="disclaim">AiTHOS provides informational support to help you organize and understand your health information. It does not provide medical advice and does not replace your care team.</p>
+  </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONCIERGE ===================== -->
+<section id="concierge" class="view">
+  <div class="cshell subjhidden" id="cshell">
+    <aside class="subjrail" id="subjrail">
+      <div class="railhead2">
+        <div class="rl">Subjects</div>
+        <button class="railclose2" aria-label="Hide subjects" onclick="toggleSubjects()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('cshell',this,'s01')"><span class="sc">S01</span><span class="sd"><b>Subject S01</b><small>Records gathering</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s02')"><span class="sc">S02</span><span class="sd"><b>Subject S02</b><small>Authorization pending</small></span><span class="dot dot-due"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s03')"><span class="sc">S03</span><span class="sd"><b>Subject S03</b><small>Ready for review</small></span><span class="dot dot-ok"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s04')"><span class="sc">S04</span><span class="sd"><b>Subject S04</b><small>Onboarding</small></span></div>
+      </div>
+      <button class="newbtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>New subject</button>
+      <div class="railnote2">Subjects shown by code. Names and all health content live in the secure record.</div>
+    </aside>
+    <button class="subjopen" id="subjopen" aria-label="Show subjects" onclick="toggleSubjects()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Subjects</span></button>
+    <div class="cstreamcol">
+    <div class="wrap stream" style="padding:0">
+    <div class="panel" data-panel="s01">
+    <div class="daybar">Monday · your morning briefing</div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">coordination agent · 7:30a</span></div>
+        <div class="bubble saira">
+          <div class="lead">Morning, Chandler. 3 subjects active. Here's where your time matters most today.</div>
+          <p>Overnight I sent 2 follow-ups, logged 1 received record, and advanced nothing past a gate without you. Three things ranked by what's blocking progress:</p>
+          <div class="prios">
+            <div class="prio flag"><span class="rank">1</span><div class="ptxt"><b>S03 — assembled file ready for your review</b><div class="why">All 5 sources in. Needs your sign-off before it goes to Healthograph creation.</div></div><button class="act">Review</button></div>
+            <div class="prio"><span class="rank">2</span><div class="ptxt"><b>S01 — lab is 32 days out</b><div class="why">Past the 30-day window. I've drafted a follow-up — just approve to send.</div></div><button class="act">Approve</button></div>
+            <div class="prio"><span class="rank">3</span><div class="ptxt"><b>S02 — authorization not yet signed</b><div class="why">No requests can go out until it's captured. Nudge the patient?</div></div><button class="act">Draft</button></div>
+          </div>
+          <p style="font-size:12.5px;color:#9fc7d8;margin-top:13px">Nothing else needs you. I'll keep gathering and flag anything new.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S01</span></div>
+        <div class="bubble saira">
+          <p>Here's the S01 tracker so you can see why the lab is the holdup:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S01 · records tracker</div>
+            <table><tbody>
+              <tr><td><span class="inst">Regional Medical Center</span><br><span class="itype">Hospital · Apr 28</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Bayside Family Practice</span><br><span class="itype">Primary care · May 6</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+              <tr><td><span class="inst">Meridian Diagnostics Lab</span><br><span class="itype">Lab · Apr 22</span></td><td style="text-align:right"><span class="st st-fu">Due · 32d</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s01 -->
+
+    <div class="panel" data-panel="s02" style="display:none">
+    <div class="daybar">Subject S02 · authorization pending</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S02</span></div>
+        <div class="bubble saira">
+          <div class="lead">S02 is waiting on one thing before anything can move.</div>
+          <p>The patient hasn't signed the §164.524 authorization yet — so no records requests can go out. This is the gate; once it's captured, I can send all four requests the same day.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Blocked — authorization not yet captured</div>
+            <p>Nothing requested yet. The patient listed 4 sources during onboarding; I have them ready to go.</p>
+            <div class="gact"><button class="approve">Draft a friendly nudge</button><button class="open">Open authorization</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">sources on file</span></div>
+        <div class="bubble saira">
+          <p>The 4 sources S02 named, ready to request the moment the authorization is in:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S02 · sources (pending authorization)</div>
+            <table><tbody>
+              <tr><td><span class="inst">Lakeside Cardiology</span><br><span class="itype">Specialist</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">St. Mary's Hospital</span><br><span class="itype">Hospital</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">Grove Primary Care</span><br><span class="itype">Primary care</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">Northside Imaging</span><br><span class="itype">Imaging</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s02 -->
+
+    <div class="panel" data-panel="s03" style="display:none">
+    <div class="daybar">Subject S03 · ready for review</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S03</span></div>
+        <div class="bubble saira">
+          <div class="lead">S03 is your top priority today — the file is complete and waiting on you.</div>
+          <p>All 5 sources are in and checked against the original list. Before it leaves my hands and goes to Healthograph creation, you confirm it's complete with the patient — that's your call, not mine.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Review gate — human sign-off required</div>
+            <p>5 of 5 sources received and checked against the original list. Patient hasn't yet confirmed completeness with you.</p>
+            <div class="gact"><button class="approve">Open file to review</button><button class="open">Message patient to confirm</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">S03 tracker</span></div>
+        <div class="bubble saira">
+          <p>Everything's accounted for:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S03 · records tracker — complete</div>
+            <table><tbody>
+              <tr><td><span class="inst">University Medical Center</span><br><span class="itype">Hospital · Apr 12</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Ridgeline Cardiology</span><br><span class="itype">Specialist · Apr 15</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Valley Primary Care</span><br><span class="itype">Primary care · Apr 18</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Quest Laboratory</span><br><span class="itype">Lab · Apr 20</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Summit Imaging</span><br><span class="itype">Imaging · Apr 24</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s03 -->
+
+    <div class="panel" data-panel="s04" style="display:none">
+    <div class="daybar">Subject S04 · onboarding</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S04</span></div>
+        <div class="bubble saira">
+          <div class="lead">S04 just started — we're in the welcome stage.</div>
+          <p>You've had the welcome conversation; next is listing every place that holds their records, then capturing the authorization. I'll guide the source-listing whenever you're ready, and I'll surface the sensitive-category check before any requests go out.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg>Next step — list the sources together</div>
+            <p>No authorization yet, no requests yet. Onboarding checklist: welcome ✓ · source list ◯ · sensitive-category check ◯ · authorization ◯</p>
+            <div class="gact"><button class="approve">Start source-listing</button><button class="open">Open onboarding script</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">reminder</span></div>
+        <div class="bubble saira">
+          <p>When we list sources, I'll prompt the sensitive-category question — mental/behavioral health, substance-use (42 CFR Part 2), HIV, genetic — so the right consent is in place up front rather than discovered mid-process.</p>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s04 -->
+
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA to draft, summarize, or pull up a subject…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="chips"><button>Draft the S01 follow-up</button><button>Open S03 for review</button><button>What's stalled this week?</button></div>
+    </div>
+    <p class="footnote">Coordination only · subjects by code · record content stays in the secure record · SAiRA recommends, you decide</p>
+  </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOSPITAL ADMIN ===================== -->
+<section id="admin" class="view">
+  <div class="cshell subjhidden" id="ashell">
+    <aside class="subjrail">
+      <div class="railhead2">
+        <div class="rl">Pending delivery</div>
+        <button class="railclose2" aria-label="Hide queue" onclick="toggleSubjects('ashell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('ashell',this,'rq1')"><span class="sc">RQ1</span><span class="sd"><b>M. Miles</b><small>Awaiting transmit · 2d</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ashell',this,'rq2')"><span class="sc">RQ2</span><span class="sd"><b>J. Alvarez</b><small>Awaiting transmit · 5d</small></span><span class="dot dot-due"></span></div>
+        <div class="subjitem" onclick="selectItem('ashell',this,'rq3')"><span class="sc">RQ3</span><span class="sd"><b>R. Okeke</b><small>Delivered ✓</small></span><span class="dot dot-ok"></span></div>
+      </div>
+      <div class="railnote2">Only patients with an active delivery request to your facility appear here. Ranked by what's most overdue.</div>
+    </aside>
+    <button class="subjopen" aria-label="Show queue" onclick="toggleSubjects('ashell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Queue</span></button>
+    <div class="cstreamcol">
+  <div class="panel" data-panel="rq1">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Secure request from</small><b>SAiRA · AiTHOS Sovereign Health</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">Received in your Release of Information inbox</p>
+
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-directed records request · 45 C.F.R. § 164.524</div>
+        <h2>A patient has asked AiTHOS to gather their records — and invited you to deliver securely.</h2>
+        <p>You're invited to transmit the records below directly into <b>this patient's secure AiTHOS environment</b>. No fax, no mail, no portal export — a direct, encrypted, deliver-only channel.</p>
+      </div>
+      <div class="ibody">
+
+        <div class="rowline"><span class="k">Patient</span><span class="v">Verified on file · authorization attached</span></div>
+        <div class="rowline"><span class="k">Authorizing document</span><span class="v">Signed § 164.524 patient authorization</span></div>
+        <div class="rowline"><span class="k">Requested by</span><span class="v">AiTHOS, at the patient's direction</span></div>
+        <div class="rowline"><span class="k">Your identity</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified — ROI authorized</span></span></div>
+
+        <div class="whatbox">
+          <div class="wl">Health data requested</div>
+          <div class="reqtags">
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Visit &amp; encounter records</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 3v6l-5 9a2 2 0 002 3h12a2 2 0 002-3l-5-9V3" stroke-linejoin="round"/></svg>Laboratory &amp; pathology</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Imaging &amp; reports</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Medications &amp; procedures</span>
+          </div>
+          <p class="daterange">Date range: <b>All available records</b> · Patient: <b>Subject on file (verified)</b></p>
+        </div>
+
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>What this access lets you do</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Deliver only.</b> Upload records into this one patient's environment.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Time-limited.</b> This link expires in 14 days.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No browsing.</b> You can't view other patients or any existing data.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Every action is recorded for the audit trail.</span></div>
+          </div>
+        </div>
+
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2" stroke-linecap="round"/></svg>Transmit records securely</button>
+          <button class="decline">Need their own form</button>
+        </div>
+
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Encrypted, deliver-only channel into the patient's secure AiTHOS environment. AiTHOS coordinates the request; the records you send go straight to the patient's record and are never handled by the assistant. If your facility requires its own release form, choose "Need their own form" and SAiRA will adapt.</span>
+        </div>
+
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq1 -->
+
+  <div class="panel" data-panel="rq2" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Secure request from</small><b>SAiRA · AiTHOS Sovereign Health</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">Received in your Release of Information inbox · open 5 days</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-directed records request · 45 C.F.R. § 164.524</div>
+        <h2>J. Alvarez has asked AiTHOS to gather their records — and invited you to deliver securely.</h2>
+        <p>You're invited to transmit the records below directly into <b>this patient's secure AiTHOS environment</b>. This request has been open 5 days — a gentle reminder from their concierge.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Verified on file · authorization attached</span></div>
+        <div class="rowline"><span class="k">Authorizing document</span><span class="v">Signed § 164.524 patient authorization</span></div>
+        <div class="rowline"><span class="k">Requested by</span><span class="v">AiTHOS, at the patient's direction</span></div>
+        <div class="rowline"><span class="k">Your identity</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified — ROI authorized</span></span></div>
+        <div class="whatbox">
+          <div class="wl">Health data requested</div>
+          <div class="reqtags">
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Visit &amp; encounter records</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Imaging &amp; reports</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Medications &amp; procedures</span>
+          </div>
+          <p class="daterange">Date range: <b>Last 5 years</b> · Patient: <b>Subject on file (verified)</b></p>
+        </div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>What this access lets you do</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Deliver only.</b> Upload records into this one patient's environment.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Time-limited.</b> This link expires in 9 days.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No browsing.</b> You can't view other patients or any existing data.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Every action is recorded for the audit trail.</span></div>
+          </div>
+        </div>
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2" stroke-linecap="round"/></svg>Transmit records securely</button>
+          <button class="decline">Need their own form</button>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Encrypted, deliver-only channel into the patient's secure AiTHOS environment. AiTHOS coordinates the request; the records you send go straight to the patient's record and are never handled by the assistant.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq2 -->
+
+  <div class="panel" data-panel="rq3" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Completed delivery</small><b>SAiRA · AiTHOS Sovereign Health</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">This request is complete — no action needed</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Delivered · 45 C.F.R. § 164.524</div>
+        <h2>Records for R. Okeke were delivered successfully. Thank you.</h2>
+        <p>You transmitted these records securely into the patient's AiTHOS environment. A receipt is on file in your activity log.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Status</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Delivered — Apr 30</span></span></div>
+        <div class="rowline"><span class="k">Delivered by</span><span class="v">Your ROI office (verified)</span></div>
+        <div class="rowline"><span class="k">What was sent</span><span class="v">Visit records, labs, imaging</span></div>
+        <div class="rowline"><span class="k">Logged</span><span class="v">Receipt in audit trail</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Delivery summary</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Complete.</b> All requested records transmitted.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Receipt recorded in the audit trail.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Access closed.</b> The deliver-only link has expired.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Secure.</b> Records went straight to the patient's record.</span></div>
+          </div>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Nothing further is needed from you for this patient. If the patient requests additional records later, a new secure invitation will appear here.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq3 -->
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    </div><!-- /cstreamcol -->
+  </div><!-- /ashell -->
+</section>
+
+<!-- ===================== SPONSOR ===================== -->
+<section id="sponsor" class="view">
+  <div class="phero sponhero"><div class="wrap inner">
+    <h1>Support patients <em>on their terms.</em></h1>
+    <div class="spon-org">Sponsoring organization · <b>Ancora Heart</b></div>
+  </div></div>
+  <div class="pshell railhidden" id="sshell">
+    <div class="pstreamcol">
+    <div class="sponwrap" style="max-width:none;padding:24px 0 40px">
+      <div class="sponhead" style="margin-bottom:4px">
+        <div>
+          <h2 style="font-family:var(--serif);font-size:24px;color:var(--ink);font-weight:600;margin:0">RPT Program — heart failure education</h2>
+          <p class="sub" style="margin-top:4px">You fund the program. SAiRA offers it to eligible patients who consent. You see how it's going — never who's in it.</p>
+        </div>
+      </div>
+
+      <div class="turn" style="margin-top:18px">
+        <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+        <div class="body">
+          <div class="name">SAiRA <span class="t">your program liaison · <span id="saira-range">this quarter</span></span></div>
+          <div class="bubble saira">
+            <div class="lead">Welcome back. Here's how the RPT program is helping patients.</div>
+            <p>I offered it to <b>284 patients</b> who agreed to hear about it; <b>240 chose to add it</b>, and most are using it to prepare questions for their doctors. CORCINCH-HF enrollment is close to target.</p>
+            <p style="margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.14);font-size:13px;color:#9fc7d8">I work for the patients, not the program. You'll always get the aggregate picture — never anyone's identity or records, and I never deploy to anyone who hasn't said yes. Full reports are in the panel on the right.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="seg"><button id="rng-30" onclick="setRange('30')">30 days</button><button id="rng-q" class="on" onclick="setRange('q')">This quarter</button><button id="rng-all" onclick="setRange('all')">All time</button></div>
+      </div>
+
+      <div class="spon-metrics">
+        <div class="smetric"><div class="k">Eligible</div><div class="v" id="m-elig">312</div><div class="d">meet criteria</div></div>
+        <div class="smetric"><div class="k">Offered</div><div class="v" id="m-off">284</div><div class="d" id="m-off-d">91% of eligible</div></div>
+        <div class="smetric"><div class="k">Opted in</div><div class="v" id="m-opt">240</div><div class="d" id="m-opt-d">85% of offered</div></div>
+        <div class="smetric"><div class="k">Active</div><div class="v" id="m-act">198</div><div class="d" id="m-act-d">83% of opted-in</div></div>
+      </div>
+
+      <div class="scard" style="margin-top:16px">
+        <div class="sch">CORCINCH-HF enrollment <span class="agtag">Over time</span></div>
+        <div class="scb">
+          <div class="trialnums">
+            <div class="tn"><div class="tnv" id="t-cons">38</div><div class="tnl">Consented</div></div>
+            <div class="tn"><div class="tnv" id="t-scr">21</div><div class="tnl">In-Screening</div></div>
+            <div class="tn"><div class="tnv" id="t-rand">12</div><div class="tnl">Randomized<br>(Treatment or Control)</div></div>
+          </div>
+          <div class="trendwrap">
+            <div class="tcap"><span>Cumulative enrollment vs. target</span><b>12 / 15 randomized</b></div>
+            <svg viewBox="0 0 360 130" width="100%" height="130" preserveAspectRatio="none" role="img" aria-label="Cumulative enrollment over time versus target">
+              <line x1="0" y1="10" x2="360" y2="10" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="45" x2="360" y2="45" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="80" x2="360" y2="80" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="115" x2="360" y2="115" stroke="#e4ecf4" stroke-width="1"/>
+              <polyline points="0,115 360,10" fill="none" stroke="#caa45a" stroke-width="2" stroke-dasharray="5 4"/>
+              <polyline points="0,115 60,104 120,88 180,70 240,52 300,40 360,30" fill="none" stroke="#0c2350" stroke-width="2.5"/>
+              <polyline points="0,117 60,110 120,99 180,86 240,72 300,62 360,54" fill="none" stroke="#1ba898" stroke-width="2.5"/>
+              <polyline points="0,119 60,115 120,109 180,99 240,87 300,77 360,66" fill="none" stroke="#3dd6c4" stroke-width="2.5"/>
+              <circle cx="360" cy="30" r="3.5" fill="#0c2350"/>
+              <circle cx="360" cy="54" r="3.5" fill="#1ba898"/>
+              <circle cx="360" cy="66" r="3.5" fill="#3dd6c4"/>
+            </svg>
+            <div class="legend">
+              <span><i style="border-color:#0c2350"></i>Consented</span>
+              <span><i style="border-color:#1ba898"></i>In-Screening</span>
+              <span><i style="border-color:#3dd6c4"></i>Randomized</span>
+              <span><i style="border-color:#caa45a;border-top-style:dashed"></i>Target</span>
+            </div>
+            <p class="suppress">Treatment and control assignments are blinded. The randomized number combines both groups.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="box">
+          <input placeholder="Ask SAiRA…">
+          <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+
+      <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health Network · Phase 1 · Confidential mockup — not for patient use</p>
+    </div>
+    </div>
+
+    <aside class="docrail" id="sponrail">
+      <div class="railhead">
+        <div class="rl">Reports</div>
+        <button class="railclose" aria-label="Hide reports" onclick="toggleRail('sshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="docitems">
+        <div class="docitem" onclick="openReport('funnel')"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4" stroke-linecap="round"/></svg></span><span class="dt"><b>Engagement funnel</b><small>Eligible → prepared</small></span></div>
+        <div class="docitem" onclick="openReport('cohort')"><span class="di di-auth"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-linecap="round"/></svg></span><span class="dt"><b>Who's engaging</b><small>De-identified shape</small></span></div>
+        <div class="docitem" onclick="openReport('themes')"><span class="di di-fid"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-6A8.4 8.4 0 1 1 21 11.5z" stroke-linejoin="round"/></svg></span><span class="dt"><b>What patients ask</b><small>Question themes</small></span></div>
+        <div class="docitem" onclick="openReport('gov')"><span class="di di-prog"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg></span><span class="dt"><b>How data is protected</b><small>Privacy controls</small></span></div>
+        <div class="docitem" onclick="openReport('export')"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Export report</b><small>Aggregate PDF</small></span></div>
+      </div>
+      <div class="railnote">Aggregate and de-identified. Small groups (under 5) are hidden so no one can be identified.</div>
+    </aside>
+    <button class="railopen" id="sponopen" aria-label="Show reports" onclick="toggleRail('sshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Reports</span></button>
+  </div>
+
+  <!-- report modal -->
+  <div id="reportModal" class="rmodal" style="display:none" onclick="closeReport(event)">
+    <div class="rmbox" onclick="event.stopPropagation()">
+      <button class="rmclose" onclick="closeReport()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>
+      <div id="rm-funnel" class="rmpanel">
+        <h2>Engagement funnel</h2>
+        <p class="rmsub">How patients move from eligible to prepared — every step is the patient's choice.</p>
+        <div class="funnel">
+          <div class="frow"><span class="fl">Eligible</span><span class="fbar"><span style="width:100%"></span></span><span class="fv">312</span><span class="fconv">—</span></div>
+          <div class="frow"><span class="fl">Offered</span><span class="fbar"><span style="width:91%"></span></span><span class="fv">284</span><span class="fconv">91%</span></div>
+          <div class="frow"><span class="fl">Opted in</span><span class="fbar"><span style="width:77%"></span></span><span class="fv">240</span><span class="fconv">85%</span></div>
+          <div class="frow"><span class="fl">Active</span><span class="fbar"><span style="width:63%"></span></span><span class="fv">198</span><span class="fconv">83%</span></div>
+          <div class="frow"><span class="fl">Prepared questions</span><span class="fbar"><span style="width:58%"></span></span><span class="fv">182</span><span class="fconv">92%</span></div>
+        </div>
+        <div class="defs">
+          <div class="defrow"><b>Eligible</b><span>Patients who match the program's criteria. No one's been contacted yet.</span></div>
+          <div class="defrow"><b>Offered</b><span>Patients SAiRA asked, with their permission to be told about it.</span></div>
+          <div class="defrow"><b>Opted in</b><span>Patients who said yes and added it. The drop here is patients freely choosing.</span></div>
+          <div class="defrow"><b>Active</b><span>Patients actually using the material.</span></div>
+          <div class="defrow"><b>Prepared questions</b><span>Patients who used it to bring questions to their own doctor — the goal.</span></div>
+        </div>
+      </div>
+      <div id="rm-cohort" class="rmpanel" style="display:none">
+        <h2>Who's engaging</h2>
+        <p class="rmsub">The de-identified shape of the group using the program. No individuals — small groups are hidden.</p>
+        <div class="bardist">
+          <div class="bd-label">Age</div>
+          <div class="bdrow"><span class="bl">45–54</span><span class="bbar"><span style="width:22%"></span></span><span class="bv">22%</span></div>
+          <div class="bdrow"><span class="bl">55–64</span><span class="bbar"><span style="width:38%"></span></span><span class="bv">38%</span></div>
+          <div class="bdrow"><span class="bl">65–74</span><span class="bbar"><span style="width:28%"></span></span><span class="bv">28%</span></div>
+          <div class="bdrow"><span class="bl">75+</span><span class="bbar"><span style="width:12%"></span></span><span class="bv">12%</span></div>
+          <div class="bd-label" style="margin-top:14px">Heart failure stage (NYHA)</div>
+          <div class="bdrow"><span class="bl">Class II</span><span class="bbar"><span style="width:46%"></span></span><span class="bv">46%</span></div>
+          <div class="bdrow"><span class="bl">Class III</span><span class="bbar"><span style="width:41%"></span></span><span class="bv">41%</span></div>
+          <div class="bdrow"><span class="bl">Class IV</span><span class="bbar"><span style="width:0"></span></span><span class="bv" style="color:var(--ink-faint)">&lt;5 · hidden</span></div>
+        </div>
+      </div>
+      <div id="rm-themes" class="rmpanel" style="display:none">
+        <h2>What patients ask</h2>
+        <p class="rmsub">The themes patients want to discuss with their care team. Helps shape better material — no individual quotes.</p>
+        <div class="bardist">
+          <div class="bdrow"><span class="bl" style="width:150px">Recovery &amp; what to expect</span><span class="bbar"><span style="width:64%"></span></span><span class="bv">64%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Am I a candidate?</span><span class="bbar"><span style="width:52%"></span></span><span class="bv">52%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Alternatives &amp; options</span><span class="bbar"><span style="width:43%"></span></span><span class="bv">43%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Risks &amp; side effects</span><span class="bbar"><span style="width:38%"></span></span><span class="bv">38%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Cost &amp; coverage</span><span class="bbar"><span style="width:29%"></span></span><span class="bv">29%</span></div>
+        </div>
+      </div>
+      <div id="rm-gov" class="rmpanel" style="display:none">
+        <h2>How data is protected</h2>
+        <p class="rmsub">These are built-in controls, not just promises.</p>
+        <div class="gov-grid" style="margin-top:6px">
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Consent first.</b> Every patient was asked and chose to take part.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8" stroke-linecap="round"/></svg><span><b>Small groups hidden.</b> Anything under 5 people is not shown.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No identities.</b> No names, records, or individual data — ever.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Updated daily.</b> Figures refresh each day.</span></div>
+        </div>
+      </div>
+      <div id="rm-export" class="rmpanel" style="display:none">
+        <h2>Export report</h2>
+        <p class="rmsub">Download an aggregate, de-identified summary for your records.</p>
+        <button class="auth-act" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" stroke-linecap="round" stroke-linejoin="round"/></svg>Download PDF summary</button>
+        <button class="auth-act" style="margin-top:10px;background:#fff;color:var(--ink);border:1px solid var(--line)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Email me a weekly digest</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== CARE TEAM ===================== -->
+<section id="careteam" class="view">
+  <div class="cshell subjhidden" id="ctshell">
+    <aside class="subjrail">
+      <div class="railhead2">
+        <div class="rl">Your patients</div>
+        <button class="railclose2" aria-label="Hide patients" onclick="toggleSubjects('ctshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('ctshell',this,'mm')"><span class="sc">MM</span><span class="sd"><b>M. Miles</b><small>Expressed interest · new</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ctshell',this,'ja')"><span class="sc">JA</span><span class="sd"><b>J. Alvarez</b><small>Healthograph shared</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ctshell',this,'ro')"><span class="sc">RO</span><span class="sd"><b>R. Okeke</b><small>Acknowledged ✓</small></span><span class="dot dot-ok"></span></div>
+      </div>
+      <div class="railnote2">Your own patients who've shared something with you, newest first. Order reflects what's awaiting you — never a clinical priority.</div>
+    </aside>
+    <button class="subjopen" aria-label="Show patients" onclick="toggleSubjects('ctshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Patients</span></button>
+    <div class="cstreamcol">
+  <div class="panel" data-panel="mm">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Note from</small><b>SAiRA · AiTHOS, on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">For: the patient's cardiology care team · shared with the patient's consent</p>
+
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-expressed interest · not a recommendation</div>
+        <h2>Your patient asked to learn more about a heart-failure therapy.</h2>
+        <p>They opted in to the <b>RPT educational program (sponsored by Ancora Heart)</b> and chose to let you know. We're sharing their interest so you can guide the conversation — <b>any clinical decision is yours.</b></p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">What they did</span><span class="v">Reviewed RPT educational material</span></div>
+        <div class="rowline"><span class="k">What they're asking</span><span class="v">To understand options &amp; bring questions to you</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Inform only — no clinical recommendation</span></div>
+
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> your patient is curious and wants to discuss it with you.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a suggestion that they're a candidate, or any clinical advice.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-initiated:</b> they raised their hand; we didn't push.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> Ancora gets no identities, ever.</span></div>
+          </div>
+        </div>
+
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>View the material they saw</button>
+          <button class="decline">Acknowledge</button>
+        </div>
+
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>The patient saw this exact note before it reached you — they control what's shared. AiTHOS surfaces their interest; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /mm -->
+
+  <div class="panel" data-panel="ja" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Note from</small><b>SAiRA · AiTHOS, on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">For: the patient's cardiology care team · shared with the patient's consent</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient shared their Healthograph · with consent</div>
+        <h2>J. Alvarez chose to share their Healthograph with you.</h2>
+        <p>Your patient assembled their records into a single Healthograph through AiTHOS and chose to make it available to you ahead of their next visit.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">What they shared</span><span class="v">Their assembled Healthograph</span></div>
+        <div class="rowline"><span class="k">Why</span><span class="v">To prepare for their next appointment</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Organize &amp; route — no clinical interpretation</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> a patient-organized summary they chose to share.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a clinical assessment or a substitute for the chart.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-controlled:</b> they chose to share it and can revoke.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> no third party has access.</span></div>
+          </div>
+        </div>
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>View the Healthograph</button>
+          <button class="decline">Acknowledge</button>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>The patient controls what's shared and can withdraw access anytime. AiTHOS organizes and routes; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /ja -->
+
+  <div class="panel" data-panel="ro" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Acknowledged</small><b>SAiRA · AiTHOS, on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">You've acknowledged this — no action needed</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Acknowledged · patient-expressed interest</div>
+        <h2>You acknowledged R. Okeke's interest in a heart-failure therapy.</h2>
+        <p>Your patient expressed interest in the RPT educational program and consented to let you know. You acknowledged it on Apr 26 — it will come up at their next visit.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">Status</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Acknowledged — Apr 26</span></span></div>
+        <div class="rowline"><span class="k">What they're asking</span><span class="v">To discuss options with you</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Inform only — no clinical recommendation</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> your patient's curiosity, noted for your conversation.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a candidacy judgment or clinical advice.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-initiated:</b> they raised their hand; we didn't push.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> Ancora gets no identities, ever.</span></div>
+          </div>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Nothing further is needed. The interest is noted for your next visit; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /ro -->
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    </div><!-- /cstreamcol -->
+  </div><!-- /ctshell -->
+</section>
+
+<script>
+function toggleRail(id){
+  document.getElementById(id||'pshell').classList.toggle('railhidden');
+}
+function toggleSubjects(id){
+  document.getElementById(id||'cshell').classList.toggle('subjhidden');
+}
+function selectItem(shellId, el, panelKey){
+  var shell = document.getElementById(shellId);
+  if(!shell) return;
+  shell.querySelectorAll('.subjitem').forEach(function(i){ i.classList.remove('on'); });
+  el.classList.add('on');
+  shell.querySelectorAll('.panel').forEach(function(p){
+    p.style.display = (p.getAttribute('data-panel')===panelKey) ? '' : 'none';
+  });
+}
+var SPON_DATA = {
+  '30':  { label:'Last 30 days', elig:74, off:68, opt:57, act:46, prep:42,
+           cons:9, scr:6, rand:3 },
+  'q':   { label:'This quarter', elig:312, off:284, opt:240, act:198, prep:182,
+           cons:38, scr:21, rand:12 },
+  'all': { label:'All time', elig:486, off:441, opt:372, act:305, prep:281,
+           cons:58, scr:33, rand:19 }
+};
+function pct(n,d){ return d? Math.round(n/d*100)+'%' : '—'; }
+function setText(id,val){ var e=document.getElementById(id); if(e) e.textContent=val; }
+function setRange(r){
+  var d = SPON_DATA[r]; if(!d) return;
+  ['30','q','all'].forEach(function(k){
+    var btn=document.getElementById('rng-'+k); if(btn) btn.classList.toggle('on', k===r);
+  });
+  setText('m-elig', d.elig); setText('m-off', d.off); setText('m-opt', d.opt); setText('m-act', d.act);
+  setText('m-off-d', pct(d.off,d.elig)+' of eligible');
+  setText('m-opt-d', pct(d.opt,d.off)+' of offered');
+  setText('m-act-d', pct(d.act,d.opt)+' of opted-in');
+  var sr=document.getElementById('saira-range'); if(sr) sr.textContent = d.label.toLowerCase();
+  setText('t-cons', d.cons); setText('t-scr', d.scr); setText('t-rand', d.rand);
+}
+function openReport(key){
+  var m=document.getElementById('reportModal'); if(!m) return;
+  m.style.display='flex';
+  ['funnel','cohort','themes','gov','export'].forEach(function(k){
+    var p=document.getElementById('rm-'+k); if(p) p.style.display = (k===key)?'':'none';
+  });
+}
+function closeReport(e){
+  document.getElementById('reportModal').style.display='none';
+}
+function show(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('show'));
+  document.getElementById(v).classList.add('show');
+  document.getElementById('t-patient').classList.toggle('on',v==='patient');
+  document.getElementById('t-concierge').classList.toggle('on',v==='concierge');
+  document.getElementById('t-admin').classList.toggle('on',v==='admin');
+  document.getElementById('t-sponsor').classList.toggle('on',v==='sponsor');
+  document.getElementById('t-careteam').classList.toggle('on',v==='careteam');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
