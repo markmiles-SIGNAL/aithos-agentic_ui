@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiTHOS · SAiRA — Agent-First Mockup (Phase 1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#04173F;--navy-2:#0a2150;--ink:#0d2547;--ink-soft:#4a5e7e;--ink-faint:#8294b0;
+    --paper:#ffffff;--mist:#f6fafd;--line:#e4ecf4;
+    --teal:#3dd6c4;--teal-deep:#1ba898;--teal-ink:#0d6b60;--teal-tint:#e2f7f3;
+    --gold:#caa45a;--amber-tint:#fbf0d8;--amber-ink:#8a6418;
+    --radius:16px;--radius-sm:10px;--shadow:0 1px 2px rgba(4,23,63,.05),0 8px 26px rgba(4,23,63,.07);
+    --serif:'Cormorant Garamond',Georgia,serif;--body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--mist);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  .topbar{position:sticky;top:0;z-index:20;background:var(--navy);border-bottom:1px solid #16315f}
+  .topbar .inner{max-width:100%;margin:0;padding:13px 28px;display:flex;align-items:center;gap:18px}
+  .topbar .toggle{margin:0 auto}
+  .logo{height:64px;width:auto;display:block}
+  .toggle{display:flex;gap:3px;background:#0c2350;border:1px solid #1c386a;border-radius:999px;padding:4px}
+  .toggle button{font-family:var(--body);font-size:13px;font-weight:500;color:#9fb6d6;background:none;border:none;padding:7px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+  .toggle button.on{background:var(--teal);color:var(--navy)}
+  .badge{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#7990b4;font-weight:600}
+  .view{display:none}.view.show{display:block}
+
+  /* SAiRA identity */
+  .saira-orb{width:40px;height:40px;border-radius:50%;flex:none;background:#04173F url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4OCA4OCI+CiAgPGRlZnM+PGNsaXBQYXRoIGlkPSJjIj48Y2lyY2xlIGN4PSI0NCIgY3k9IjQ0IiByPSI0NCIvPjwvY2xpcFBhdGg+PC9kZWZzPgogIDxnIGNsaXAtcGF0aD0idXJsKCNjKSI+CiAgICA8cmVjdCB3aWR0aD0iODgiIGhlaWdodD0iODgiIGZpbGw9IiMwYTIxNTAiLz4KICAgIDxwYXRoIGQ9Ik0wIDMwIEE1MiA1MiAwIDAgMSA4OCAzMCBMODggODggTDAgODggWiIgZmlsbD0iIzA0MTczRiIvPgogICAgPHBhdGggZD0iTTAgMzAgQTUyIDUyIDAgMCAxIDg4IDMwIiBmaWxsPSJub25lIiBzdHJva2U9IiM1ZGNhYTUiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iNDQiIGN5PSIxNyIgcj0iMy41IiBmaWxsPSIjZmZmZmZmIi8+CiAgICA8Y2lyY2xlIGN4PSI0NCIgY3k9IjE3IiByPSI5IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjIyIi8+CiAgICA8bGluZSB4MT0iNDQiIHkxPSI2IiB4Mj0iNDQiIHkyPSIyOCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjAuOCIgb3BhY2l0eT0iMC41Ii8+CiAgICA8bGluZSB4MT0iMzMiIHkxPSIxNyIgeDI9IjU1IiB5Mj0iMTciIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIwLjgiIG9wYWNpdHk9IjAuNSIvPgogIDwvZz4KPC9zdmc+Cg==") center/cover no-repeat;position:relative;box-shadow:0 0 0 4px rgba(61,214,196,.14)}
+  .saira-orb.lg{width:52px;height:52px}
+  .saira-orb.sm{width:30px;height:30px;box-shadow:0 0 0 3px rgba(61,214,196,.14)}
+
+  /* conversational stream */
+  .stream{padding:26px 0 60px}
+  .daybar{display:flex;align-items:center;gap:10px;margin:6px 0 22px;color:var(--ink-faint);font-size:12px;letter-spacing:.04em}
+  .daybar:before,.daybar:after{content:"";height:1px;background:var(--line);flex:1}
+
+  .turn{display:flex;gap:14px;margin-bottom:22px;align-items:flex-start}
+  .turn .who{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;width:52px}
+  .turn .who small{font-size:10px;color:var(--ink-faint);font-weight:500}
+  .turn .body{flex:1;padding-top:2px}
+  .turn .body .name{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:8px}
+  .turn .body .name .t{font-size:11px;color:var(--ink-faint);font-weight:400}
+  .bubble{background:var(--paper);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:15px 18px;box-shadow:var(--shadow);font-size:14.5px;color:var(--ink);line-height:1.6}
+  .bubble.saira{background:linear-gradient(168deg,#082a55,#0c2350);border:none;color:#e7f1fb;border-radius:4px 14px 14px 14px}
+  .bubble.saira b{color:#fff}
+  .bubble p+p{margin-top:10px}
+  .bubble .lead{font-family:var(--serif);font-size:21px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:8px}
+
+  /* prioritized action chips inside SAiRA */
+  .prios{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+  .prio{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:11px 13px}
+  .prio .rank{width:22px;height:22px;border-radius:6px;background:var(--teal);color:var(--navy);font-weight:600;font-size:12px;display:grid;place-items:center;flex:none}
+  .prio .ptxt{flex:1;font-size:13.5px;color:#dce8f7}
+  .prio .ptxt b{color:#fff;font-weight:600}
+  .prio .why{font-size:11.5px;color:#9fc7d8;margin-top:1px}
+  .prio .act{flex:none;font-size:12px;font-weight:500;color:var(--navy);background:var(--teal);border:none;border-radius:7px;padding:7px 12px;cursor:pointer}
+  .prio.flag{border-color:rgba(202,164,90,.4)}
+  .prio.flag .rank{background:var(--gold)}
+
+  /* inline structured view the agent "summons" */
+  .summon{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .summon .sh{padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:8px;background:var(--mist)}
+  .summon .sh svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  table{width:100%;border-collapse:collapse}
+  .summon td{padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  .summon tr:last-child td{border-bottom:none}
+  .inst{font-weight:500;color:var(--ink)}.itype{font-size:11px;color:var(--ink-faint)}
+  .st{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;display:inline-block}
+  .st-req{background:#e7eefb;color:#27508c}.st-fu{background:var(--amber-tint);color:var(--amber-ink)}
+  .st-rc{background:var(--teal-tint);color:var(--teal-ink)}
+
+  /* gate / review moment — dashboard earns its place */
+  .gate{margin-top:14px;background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:12px;padding:15px 17px}
+  .gate .gh{font-size:13px;font-weight:600;color:var(--teal-ink);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .gate .gh svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .gate p{font-size:13px;color:#176055;line-height:1.5}
+  .gate .gact{margin-top:11px;display:flex;gap:9px}
+  .gate .gact button{font-size:12.5px;font-weight:500;border-radius:8px;padding:8px 14px;cursor:pointer;border:none}
+  .gate .approve{background:var(--teal-deep);color:#fff}
+  .gate .open{background:#fff;color:var(--teal-ink);border:1px solid #bfe9e0}
+  /* live flow */
+  .draftcard{margin-top:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:11px;overflow:hidden}
+  .drafthd{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:600;color:#cfe0f3}
+  .drafthd svg{width:14px;height:14px;stroke:var(--teal)}
+  .draftbody{padding:13px 14px;font-size:13px;line-height:1.6;color:#dce8f7;white-space:pre-wrap;min-height:20px}
+  .draftbody .cursor{display:inline-block;width:7px;height:15px;background:var(--teal);vertical-align:text-bottom;animation:blink 1s steps(2) infinite}
+  @keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+  .flowactions{margin-top:12px;display:flex;gap:9px}
+  .flowactions button{font-size:12.5px;font-weight:500;border-radius:8px;padding:9px 16px;cursor:pointer;border:none}
+  .flowactions .approve{background:var(--teal);color:var(--navy)}
+  .flowactions .open{background:rgba(255,255,255,.1);color:#cfe0f3;border:1px solid rgba(255,255,255,.18)}
+  .sendconfirm{display:flex;align-items:center;gap:10px;margin-top:11px;padding:11px 13px;background:rgba(255,255,255,.06);border-radius:9px;font-size:12.5px;color:#9fc7d8}
+  .spinner{width:14px;height:14px;border:2px solid rgba(61,214,196,.3);border-top-color:var(--teal);border-radius:50%;flex:none;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .flowstep{animation:rise .4s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .st.flip{animation:flipin .5s ease both}
+  @keyframes flipin{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+  #s01-labrow.done{background:var(--teal-tint)}
+  #s01-labrow{transition:background .5s ease}
+
+  /* composer */
+  .composer{background:var(--mist);padding:22px 0 10px;margin-top:8px}
+  .composer .box{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:8px 8px 8px 16px;box-shadow:var(--shadow)}
+  .composer input{flex:1;border:none;outline:none;font-family:var(--body);font-size:14px;color:var(--ink);background:none}
+  .composer .send{width:38px;height:38px;border-radius:9px;background:var(--teal);border:none;display:grid;place-items:center;cursor:pointer;flex:none}
+  .composer .send svg{width:17px;height:17px;stroke:var(--navy)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chips button{font-size:12px;color:var(--teal-ink);background:var(--teal-tint);border:none;border-radius:999px;padding:7px 13px;cursor:pointer}
+
+  /* patient hero */
+  .phero{background:var(--navy);color:#eaf1fb;padding:30px 0;position:relative;overflow:hidden;text-align:center}
+  .phero:before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:520px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(61,214,196,.13),transparent 64%)}
+  .phero .inner{position:relative;z-index:2}
+  .phero h1{font-family:var(--serif);font-weight:600;font-size:30px;color:#fff;line-height:1.05}
+  .phero h1 em{font-style:italic;color:var(--teal)}
+  .phero p{margin-top:8px;font-size:14px;color:#bccbe2}
+
+  .disclaim{text-align:center;font-size:11px;color:var(--ink-faint);max-width:60ch;margin:8px auto 0;padding-bottom:30px;line-height:1.5}
+  .footnote{text-align:center;font-size:11px;color:var(--ink-faint);padding:6px 0 0}
+
+  @media(max-width:600px){
+    .wrap{padding:0 14px}
+    .topbar .inner{padding:11px 14px;flex-wrap:wrap;gap:10px}
+    .logo{height:48px}.badge{display:none}
+    .toggle{order:3;width:100%;justify-content:center;flex-wrap:wrap}
+    .turn .who{width:42px}
+    .prio{flex-wrap:wrap}.prio .act{margin-left:44px}
+    .gate .gact{flex-direction:column}
+    .adminhead{flex-direction:column;align-items:flex-start;gap:12px}
+    .scope-grid{grid-template-columns:1fr}
+    .adminact{flex-direction:column}
+    .spon-metrics{grid-template-columns:1fr 1fr}
+    .spon-cols{grid-template-columns:1fr}
+    .sponhead{flex-direction:column}.sponhead .org{text-align:left}
+    .frow .fl{width:96px}
+    .tbrow .tbl{width:92px}
+    .ctactions{flex-direction:column}
+  }
+  /* hospital admin view */
+  .adminwrap{max-width:680px;margin:0 auto;padding:30px 24px 60px}
+  .adminhead{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .adminhead .from{display:flex;align-items:center;gap:12px}
+  .adminhead .from small{display:block;font-size:11px;color:var(--ink-faint);letter-spacing:.04em}
+  .adminhead .from b{font-size:15px;color:var(--ink);font-weight:600}
+  .invite{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-top:6px}
+  .invite .ih{background:linear-gradient(168deg,#082a55,#0c2350);color:#e7f1fb;padding:22px 24px}
+  .invite .ih .tagline{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+  .invite .ih h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.12}
+  .invite .ih p{font-size:13.5px;color:#bccbe2;margin-top:8px;line-height:1.55}
+  .invite .ih p b{color:#fff}
+  .ibody{padding:22px 24px}
+  .rowline{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .rowline:last-of-type{border-bottom:none}
+  .rowline .k{color:var(--ink-faint)}
+  .rowline .v{color:var(--ink);font-weight:500;text-align:right}
+  .verified{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--teal-ink);background:var(--teal-tint);padding:4px 11px;border-radius:999px}
+  .verified svg{width:13px;height:13px;stroke:var(--teal-deep)}
+  .scopebox{margin-top:18px;background:var(--mist);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .scopebox h3{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .scopebox h3 svg{width:15px;height:15px;stroke:var(--teal-deep)}
+  .scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .scopeitem{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--ink-soft)}
+  .scopeitem svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  .scopeitem b{color:var(--ink);font-weight:500}
+  .whatbox{margin-top:16px}
+  .whatbox .wl{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+  .reqtags{display:flex;flex-wrap:wrap;gap:8px}
+  .reqtag{font-size:12.5px;color:var(--ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:8px;padding:6px 12px;display:inline-flex;align-items:center;gap:7px}
+  .reqtag svg{width:13px;height:13px;stroke:var(--teal-deep)}
+  .daterange{font-size:12.5px;color:var(--ink-soft);margin-top:10px}
+  .daterange b{color:var(--ink);font-weight:500}
+  .adminact{display:flex;gap:11px;margin-top:22px}
+  .adminact button{font-size:14px;font-weight:500;border-radius:10px;padding:13px 20px;cursor:pointer;border:none;flex:1}
+  .adminact .deliver{background:var(--teal);color:var(--navy);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .adminact .deliver svg{width:17px;height:17px;stroke:var(--navy)}
+  .adminact .decline{background:#fff;color:var(--ink-soft);border:1px solid var(--line);flex:0 0 auto}
+  .securenote{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.5}
+  .securenote svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* sponsor view */
+  .sponwrap{max-width:860px;margin:0 auto;padding:28px 24px 56px}
+  .sponhead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+  .sponhead .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-deep);font-weight:600;margin-bottom:8px}
+  .sponhead h1{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--ink);line-height:1.08}
+  .sponhead .sub{font-size:13.5px;color:var(--ink-soft);margin-top:5px;max-width:52ch}
+  .sponhead .org{flex:none;text-align:right;font-size:12.5px}
+  .sponhead .org small{display:block;color:var(--ink-faint);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+  .sponhead .org b{font-size:15px;color:var(--ink)}
+  .boundary-banner{display:flex;gap:11px;align-items:center;background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:12px;padding:13px 16px;margin:16px 0 22px;font-size:12.5px;color:var(--teal-ink);font-weight:500}
+  .boundary-banner svg{width:18px;height:18px;flex:none;stroke:var(--teal-deep)}
+  .spon-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+  .smetric{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 17px;box-shadow:var(--shadow)}
+  .smetric .k{font-size:12px;color:var(--ink-faint)}
+  .smetric .v{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);margin-top:3px}
+  .smetric .d{font-size:11.5px;color:var(--teal-ink);margin-top:3px;font-weight:500}
+  .spon-cols{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+  .scard{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .scard .sch{padding:15px 18px;border-bottom:1px solid var(--line);font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
+  .scard .sch .agtag{font-family:var(--body);font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-ink);background:var(--teal-tint);padding:4px 10px;border-radius:999px}
+  .scard .scb{padding:18px}
+  /* engagement funnel */
+  .funnel{display:flex;flex-direction:column;gap:11px}
+  .frow{display:flex;align-items:center;gap:12px}
+  .frow .fl{font-size:13px;color:var(--ink-soft);width:130px;flex:none}
+  .frow .fbar{flex:1;height:26px;background:var(--mist);border-radius:6px;overflow:hidden;position:relative}
+  .frow .fbar span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .frow .fv{font-size:13px;font-weight:600;color:var(--ink);width:46px;text-align:right;flex:none}
+  .consent-note{font-size:11.5px;color:var(--ink-faint);margin-top:13px;display:flex;gap:8px;align-items:flex-start}
+  .consent-note svg{width:14px;height:14px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* fund / value return */
+  .trialnums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .tn{background:var(--mist);border:1px solid var(--line);border-radius:10px;padding:13px 12px;text-align:center}
+  .tn .tnv{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);line-height:1}
+  .tn .tnl{font-size:10.5px;color:var(--ink-soft);margin-top:5px;line-height:1.3}
+  .trialbar{display:flex;flex-direction:column;gap:9px}
+  .tbrow{display:flex;align-items:center;gap:11px}
+  .tbrow .tbl{font-size:12px;color:var(--ink-soft);width:118px;flex:none}
+  .tbrow .tbbar{flex:1;height:22px;background:var(--mist);border-radius:6px;overflow:hidden;position:relative}
+  .tbrow .tbbar span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .tbrow .tbv{font-size:13px;font-weight:600;color:var(--ink);width:34px;text-align:right;flex:none}
+  /* funnel conversion rates */
+  .frow .fconv{font-size:10.5px;color:var(--teal-ink);width:42px;text-align:right;flex:none;font-weight:600}
+  .dropoff{display:flex;gap:8px;align-items:flex-start;background:var(--amber-tint);border-radius:9px;padding:10px 13px;margin-top:12px;font-size:12px;color:var(--amber-ink);line-height:1.45}
+  .dropoff svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--amber-ink)}
+  /* enrollment trend chart */
+  .trendwrap{margin:4px 0 14px}
+  .trendwrap .tcap{font-size:11.5px;color:var(--ink-soft);margin-bottom:8px;display:flex;justify-content:space-between}
+  .trendwrap .tcap b{color:var(--ink)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);margin-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:14px;height:0;border-top-width:2px;border-top-style:solid;display:inline-block}
+  /* governance panel */
+  .gov{margin-top:16px;background:var(--navy);border-radius:12px;padding:16px 18px;color:#cfe0f3}
+  .gov h3{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+  .gov h3 svg{width:15px;height:15px;stroke:var(--teal)}
+  .gov-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  /* moat / why-it-wins investor view */
+  .moatwrap{max-width:920px;margin:0 auto;padding:34px 24px 60px}
+  .moat-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+  .moat-lede{font-family:var(--serif);font-size:27px;line-height:1.18;color:var(--ink);font-weight:600;max-width:24ch;margin-bottom:8px}
+  .moat-sub{font-size:14.5px;color:var(--ink-soft);line-height:1.6;max-width:62ch;margin-bottom:30px}
+  .promises{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+  .promise{background:var(--navy);color:#eaf1fb;border-radius:14px;padding:22px 20px;position:relative;overflow:hidden}
+  .promise:before{content:"";position:absolute;top:-60px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(61,214,196,.16),transparent 65%)}
+  .promise .pnum{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:10px}
+  .promise h3{font-family:var(--serif);font-size:20px;font-weight:600;color:#fff;line-height:1.15;margin-bottom:8px;position:relative}
+  .promise p{font-size:13px;color:#bccbe2;line-height:1.55;position:relative}
+  .promise .who{font-size:11.5px;color:var(--teal);font-weight:600;margin-top:11px;position:relative}
+  .moat-and{text-align:center;font-family:var(--serif);font-size:17px;color:var(--gold);font-weight:600;margin:6px 0 28px}
+  .moat-claim{background:linear-gradient(168deg,#082a55,#0c2350);color:#eaf1fb;border-radius:16px;padding:26px 28px;margin-bottom:30px;position:relative;overflow:hidden}
+  .moat-claim:before{content:"";position:absolute;top:-80px;left:-30px;width:240px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(202,164,90,.14),transparent 64%)}
+  .moat-claim .mc-h{font-family:var(--serif);font-size:22px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:10px;position:relative}
+  .moat-claim p{font-size:14px;color:#cfe0f3;line-height:1.6;position:relative;max-width:70ch}
+  .moat-claim b{color:#fff}
+  .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:30px}
+  .vs-card{border-radius:14px;padding:22px 22px;border:1px solid var(--line)}
+  .vs-them{background:var(--mist)}
+  .vs-us{background:var(--teal-tint);border-color:#bfe9e0}
+  .vs-card .vh{font-size:12px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+  .vs-them .vh{color:var(--ink-faint)}
+  .vs-us .vh{color:var(--teal-ink)}
+  .vrow{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.5;margin-bottom:11px;color:var(--ink-soft)}
+  .vrow svg{width:16px;height:16px;flex:none;margin-top:2px}
+  .vs-them .vrow svg{stroke:#c98b7d}
+  .vs-us .vrow svg{stroke:var(--teal-deep)}
+  .vs-us .vrow b{color:var(--ink)}
+  .moat-foot{display:flex;gap:11px;align-items:flex-start;background:var(--amber-tint);border-radius:12px;padding:15px 18px;font-size:13px;color:var(--amber-ink);line-height:1.55}
+  .moat-foot svg{width:18px;height:18px;flex:none;margin-top:1px;stroke:var(--amber-ink)}
+  @media(max-width:760px){.promises{grid-template-columns:1fr}.vs-grid{grid-template-columns:1fr}.moat-lede{font-size:23px}}
+  .govitem{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.4}
+  .govitem svg{width:14px;height:14px;flex:none;margin-top:1px;stroke:var(--teal)}
+  .govitem b{color:#fff;font-weight:600}
+  .gov .ref{margin-top:11px;font-size:10.5px;color:#8aa6cc;border-top:1px solid #16315f;padding-top:9px}
+  .toolbar{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .toolbar .seglabel{font-size:12px;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;text-transform:uppercase}
+  .toolbar .seg{display:flex;gap:0;background:#fff;border:1.5px solid #cfd9e6;border-radius:9px;padding:3px;box-shadow:0 1px 2px rgba(4,23,63,.04)}
+  .toolbar .seg button{font-family:var(--body);font-size:13px;color:var(--ink-soft);background:none;border:none;padding:8px 16px;border-radius:7px;cursor:pointer;font-weight:500;transition:background .15s, color .15s}
+  .toolbar .seg button:hover{color:var(--ink);background:#f1f5fb}
+  .toolbar .seg button.on{background:var(--navy);color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(4,23,63,.18)}
+  .toolbar .exp{margin-left:auto;font-size:12px;font-weight:500;color:var(--teal-ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:8px;padding:7px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .toolbar .exp svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  .suppress{font-size:11px;color:var(--ink-faint);font-style:italic;margin-top:8px}
+  /* report modal */
+  .rmodal{position:fixed;inset:0;background:rgba(4,23,63,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px}
+  .rmbox{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:84vh;overflow-y:auto;padding:28px;position:relative;box-shadow:0 24px 60px rgba(4,23,63,.3)}
+  /* Healthograph artifact — feels like a personal document the patient owns */
+  .hgbox{background:#fffdf8;border-radius:18px;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;position:relative;box-shadow:0 30px 70px rgba(4,23,63,.35);border:1px solid #ece4d3}
+  .hgclose{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:8px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;color:var(--ink-soft);z-index:2}
+  .hgclose svg{width:16px;height:16px;stroke:currentColor}
+  .hghead{background:linear-gradient(168deg,#0a2a5c 0%,#04173F 100%);color:#fff;padding:30px 32px 26px;position:relative;overflow:hidden}
+  .hghead:before{content:"";position:absolute;top:-100px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(61,214,196,.18),transparent 65%)}
+  .hghead .hgkicker{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:10px;position:relative}
+  .hghead h2{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.08;color:#fff;position:relative;margin-bottom:6px}
+  .hghead .hgowner{font-size:13.5px;color:#bccbe2;position:relative;margin-bottom:14px}
+  .hghead .hgowner b{color:#fff;font-weight:500}
+  .hgmeta{display:flex;gap:18px;flex-wrap:wrap;font-size:11.5px;color:#9fb6d6;border-top:1px solid rgba(255,255,255,.12);padding-top:13px;margin-top:8px;position:relative}
+  .hgmeta b{color:#fff;font-weight:500}
+  .hgsec{padding:24px 32px;border-bottom:1px solid #eee3cd}
+  .hgsec:last-of-type{border-bottom:none}
+  .hgsec h3{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);margin-bottom:4px}
+  .hgsec .hgdesc{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5}
+  /* sources timeline */
+  .hgtl{position:relative;padding-left:24px}
+  .hgtl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:#ece4d3}
+  .hgtlitem{position:relative;margin-bottom:14px}
+  .hgtlitem:last-child{margin-bottom:0}
+  .hgtlitem:before{content:"";position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--teal);border:2px solid #fffdf8;box-shadow:0 0 0 1px var(--teal-deep)}
+  .hgtlitem .hgsrc{font-size:13.5px;font-weight:600;color:var(--ink)}
+  .hgtlitem .hgmd{font-size:11.5px;color:var(--ink-faint);margin-top:1px}
+  .hgtlitem .hgmd b{color:var(--ink-soft);font-weight:500}
+  /* topic cards */
+  .hgtopics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hgtopic{background:#fff;border:1px solid #ece4d3;border-radius:11px;padding:13px 14px}
+  .hgtopic .htn{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px}
+  .hgtopic .htm{font-size:11px;color:var(--teal-ink);font-weight:600;letter-spacing:.03em;margin-bottom:6px}
+  .hgtopic .htd{font-size:12px;color:var(--ink-soft);line-height:1.45}
+  .hgtopic-note{margin-top:11px;font-size:11.5px;color:var(--ink-faint);font-style:italic;line-height:1.5}
+  /* questions */
+  .hgqs{display:flex;flex-direction:column;gap:9px}
+  .hgq{background:#fff;border:1px solid #ece4d3;border-radius:10px;padding:12px 14px;display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--ink);line-height:1.5}
+  .hgq:before{content:"";display:block;width:16px;height:16px;border:2px solid var(--teal-deep);border-radius:50%;flex:none;margin-top:2px;background:radial-gradient(circle at center, var(--teal-deep) 0 3px, transparent 4px)}
+  .hgq-add{background:transparent;border:1px dashed var(--teal-deep);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--teal-ink);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:7px;margin-top:10px}
+  .hgq-add svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  /* share footer */
+  .hgshare{background:#fff;padding:22px 32px;border-top:1px solid #ece4d3;display:flex;flex-direction:column;gap:11px}
+  .hgshare-row{display:flex;gap:9px;align-items:center}
+  .hgshare-row button{font-size:12.5px;font-weight:500;border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--teal-deep);background:#fff;color:var(--teal-ink);display:inline-flex;align-items:center;gap:7px}
+  .hgshare-row button svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  .hgshare-row button.primary{background:var(--teal-deep);color:#fff;border-color:var(--teal-deep)}
+  .hgshare-row button.primary svg{stroke:#fff}
+  .hgshare-row button:hover{background:var(--teal-tint)}
+  .hgshare-row button.primary:hover{background:var(--teal);color:var(--navy)}
+  .hgshare-row button.primary:hover svg{stroke:var(--navy)}
+  .hgclosing{font-size:11.5px;color:var(--ink-soft);line-height:1.55;font-style:italic;border-top:1px solid #ece4d3;padding-top:11px}
+  .hgclosing b{color:var(--ink);font-style:normal;font-weight:500}
+  @media(max-width:560px){
+    .hgtopics{grid-template-columns:1fr}
+    .hghead{padding:24px 22px 22px}
+    .hghead h2{font-size:25px}
+    .hgsec{padding:20px 22px}
+    .hgshare{padding:18px 22px}
+  }
+  .rmclose{position:absolute;top:16px;right:16px;background:var(--paper);border:1px solid var(--line);border-radius:8px;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--ink-soft)}
+  .rmclose svg{width:16px;height:16px;stroke:currentColor}
+  .rmbox h2{font-family:var(--serif);font-size:24px;color:var(--ink);font-weight:600;margin-bottom:4px}
+  .rmsub{font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.5}
+  .bardist .bd-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:8px}
+  .bdrow{display:flex;align-items:center;gap:11px;margin-bottom:8px}
+  .bdrow .bl{font-size:12.5px;color:var(--ink-soft);width:70px;flex:none}
+  .bdrow .bbar{flex:1;height:20px;background:var(--mist);border-radius:6px;overflow:hidden}
+  .bdrow .bbar span{display:block;height:100%;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px}
+  .bdrow .bv{font-size:12.5px;font-weight:600;color:var(--ink);width:64px;text-align:right;flex:none}
+  .govitem.dark{color:var(--ink-soft)}
+  .govitem.dark svg{stroke:var(--teal-deep)}
+  .govitem.dark b{color:var(--ink)}
+  .auth-act{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:13px;border-radius:10px;border:none;background:var(--teal-deep);color:#fff;font-family:var(--body);font-size:14px;font-weight:600;cursor:pointer}
+  .auth-act svg{width:17px;height:17px;stroke:#fff}
+  .sponhero .spon-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:10px}
+  .sponhero .spon-org{margin-top:14px;font-size:13px;color:#9fc7d8}
+  .sponhero .spon-org b{color:#fff;font-weight:600}
+  .defs{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .defrow{display:flex;gap:10px;font-size:11.5px;line-height:1.45;margin-bottom:7px}
+  .defrow b{flex:none;width:108px;color:var(--ink);font-weight:600}
+  .defrow span{color:var(--ink-soft)}
+  .nodata{display:flex;gap:9px;align-items:flex-start;background:var(--mist);border-radius:10px;padding:13px 15px;margin-top:16px;font-size:12px;color:var(--ink-soft);line-height:1.5}
+  .nodata svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  /* patient document sidebar (Claude-style) */
+  .pshell{display:grid;grid-template-columns:1fr 208px;gap:0;max-width:980px;margin:0 auto;position:relative}
+  .docrail{padding:24px 20px 24px 22px;border-left:1px solid var(--line);order:2}
+  .docrail .rl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin-bottom:10px}
+  .docitem{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.15s}
+  .docitem:hover{background:var(--paper);border-color:var(--line)}
+  .docitem .di{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex:none}
+  .docitem .di svg{width:14px;height:14px}
+  .docitem .dt{flex:1;min-width:0}
+  .docitem .dt b{display:block;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .docitem .dt small{font-size:10px;color:var(--ink-faint)}
+  .di-graph{background:linear-gradient(135deg,#06204e,#0c3268)}.di-graph svg{stroke:var(--teal)}
+  .di-auth{background:var(--teal-tint)}.di-auth svg{stroke:var(--teal-deep)}
+  .di-fid{background:var(--teal-tint)}.di-fid svg{stroke:var(--teal-deep)}
+  .di-prog{background:#eef4fb}.di-prog svg{stroke:#3a78c2}
+  /* RPT just-added confirmation pulse */
+  .docitem.rpt-added{background:var(--teal-tint);border-color:#bfe9e0}
+  .docitem.rpt-added .di-prog{background:var(--teal);transition:background .4s ease}
+  .docitem.rpt-added .di-prog svg{stroke:#fff}
+  .rpt-pulse{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:5px;padding:1px 6px;margin-left:6px;animation:pulseIn .6s ease both}
+  @keyframes pulseIn{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+  .docrail .railnote{margin-top:13px;padding:10px 9px 0;font-size:10.5px;color:var(--ink-faint);line-height:1.5;border-top:1px solid var(--line)}
+  .docrail .own{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--teal-ink);margin-bottom:6px}
+  .docrail .own svg{width:12px;height:12px;stroke:var(--teal-deep)}
+  .pstreamcol{min-width:0;padding-right:26px;order:1}
+  .railhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .railclose{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:4px;border-radius:6px;display:grid;place-items:center;transition:.15s}
+  .railclose:hover{background:var(--paper);color:var(--ink)}
+  .railclose svg{width:16px;height:16px;stroke:currentColor}
+  .railopen{display:none;position:absolute;top:18px;right:22px;z-index:5;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:500;color:var(--ink);box-shadow:var(--shadow)}
+  .railopen svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .railopen:hover{border-color:var(--teal)}
+  /* collapsed state */
+  .pshell.railhidden{grid-template-columns:1fr;position:relative}
+  .pshell.railhidden .docrail{display:none}
+  .pshell.railhidden .railopen{display:inline-flex}
+  .pshell.railhidden .pstreamcol{padding-right:0}
+  /* concierge subject rail (left, mirrors Assets) */
+  .cshell{display:grid;grid-template-columns:208px 1fr;gap:0;max-width:980px;margin:0 auto;position:relative}
+  .subjrail{padding:24px 22px 24px 20px;border-right:1px solid var(--line)}
+  .railhead2{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .railhead2 .rl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
+  .railclose2{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:4px;border-radius:6px;display:grid;place-items:center;transition:.15s}
+  .railclose2:hover{background:var(--paper);color:var(--ink)}
+  .railclose2 svg{width:16px;height:16px;stroke:currentColor}
+  .subjitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;margin-bottom:4px;border:1px solid transparent;transition:.15s}
+  .subjitem:hover{background:var(--paper);border-color:var(--line)}
+  .subjitem.on{background:var(--paper);border-color:var(--teal)}
+  .subjitem .sc{width:30px;height:30px;border-radius:8px;background:#eef4fb;display:grid;place-items:center;flex:none;font-size:11px;font-weight:600;color:var(--navy)}
+  .subjitem.on .sc{background:var(--navy);color:#fff}
+  .subjitem .sd{flex:1;min-width:0}
+  .subjitem .sd b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+  .subjitem .sd small{font-size:10.5px;color:var(--ink-faint)}
+  .subjitem .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .dot-fu{background:var(--gold)}.dot-ok{background:var(--teal-deep)}.dot-due{background:#d98f8f}
+  .subjrail .railnote2{margin-top:13px;padding:10px 9px 0;font-size:10.5px;color:var(--ink-faint);line-height:1.5;border-top:1px solid var(--line)}
+  .subjrail .newbtn{display:flex;align-items:center;gap:7px;width:100%;margin-top:10px;padding:9px 10px;border:1px dashed var(--teal);background:var(--teal-tint);border-radius:9px;cursor:pointer;font-family:var(--body);font-size:12px;font-weight:500;color:var(--teal-ink)}
+  .subjrail .newbtn svg{width:14px;height:14px;stroke:var(--teal-deep)}
+  .cstreamcol{min-width:0;padding-left:26px}
+  .subjopen{display:none;position:absolute;top:18px;left:0;z-index:5;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:500;color:var(--ink);box-shadow:var(--shadow)}
+  .subjopen svg{width:16px;height:16px;stroke:var(--teal-deep)}
+  .subjopen:hover{border-color:var(--teal)}
+  .cshell.subjhidden{grid-template-columns:1fr}
+  .cshell.subjhidden .subjrail{display:none}
+  .cshell.subjhidden .subjopen{display:inline-flex}
+  .cshell.subjhidden .cstreamcol{padding-left:0}
+  @media(max-width:780px){
+    .cshell{grid-template-columns:1fr}
+    .subjrail{border-right:none;border-bottom:1px solid var(--line);padding:16px}
+    .subjrail .subjitem{display:inline-flex;width:auto;margin-right:8px}
+    .subjrail .subjitems{display:flex;flex-wrap:wrap;gap:0}
+    .subjrail .railnote2{display:none}
+    .cstreamcol{padding-left:0}
+    .cshell.subjhidden .subjopen{position:static;display:inline-flex;margin:14px 16px 0;top:auto;left:auto;order:0}
+  }
+  /* collapsible rail */
+  .pshell.railclosed{grid-template-columns:1fr}
+  .pshell.railclosed .docrail{display:none}
+  .pshell.railclosed .pstreamcol{padding-right:0}
+  .railtoggle{display:inline-flex;align-items:center;gap:7px;font-family:var(--body);font-size:12.5px;font-weight:500;color:var(--teal-ink);background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:999px;padding:7px 14px;cursor:pointer;margin-bottom:14px}
+  .railtoggle svg{width:15px;height:15px;stroke:var(--teal-deep)}
+  @media(max-width:780px){
+    .pshell{grid-template-columns:1fr}
+    .docrail{border-left:none;border-top:1px solid var(--line);padding:18px 16px;order:2}
+    .docrail .docitem{display:inline-flex;width:auto;margin-right:8px}
+    .docrail .docitems{display:flex;flex-wrap:wrap;gap:0}
+    .docrail .railnote{display:none}
+    .pstreamcol{padding-right:0;order:1}
+    .pshell.railhidden .railopen{position:static;display:inline-flex;margin:14px 16px 0 auto;top:auto;right:auto;order:0}
+  }
+  /* care team view */
+  .ctwrap{max-width:680px;margin:0 auto;padding:30px 24px 56px}
+  .ctlede{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+  .ctlede .saira-orb{flex:none}
+  .ctlede small{display:block;font-size:11px;color:var(--ink-faint);letter-spacing:.04em}
+  .ctlede b{font-size:15px;color:var(--ink)}
+  .ctmsg{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .ctmsg .cth{background:var(--mist);border-bottom:1px solid var(--line);padding:14px 20px;font-size:12.5px;color:var(--ink-soft)}
+  .ctmsg .cth b{color:var(--ink);font-weight:600}
+  .ctmsg .ctbody{padding:22px 24px}
+  .ctmsg .ctbody h2{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--ink);line-height:1.2;margin-bottom:12px}
+  .ctmsg .ctbody p{font-size:14px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px}
+  .ctmsg .ctbody p b{color:var(--ink);font-weight:500}
+  .ctpatient{display:flex;align-items:center;gap:11px;background:var(--mist);border-radius:11px;padding:13px 15px;margin-bottom:16px}
+  .ctpatient .pid{width:38px;height:38px;border-radius:9px;background:var(--navy);color:var(--teal);display:grid;place-items:center;font-weight:600;font-size:13px;flex:none}
+  .ctpatient .pn b{font-size:14px;color:var(--ink)}
+  .ctpatient .pn small{display:block;font-size:11.5px;color:var(--ink-faint)}
+  .ctclaim{background:var(--teal-tint);border:1px solid #bfe9e0;border-radius:11px;padding:14px 16px;margin:4px 0 16px}
+  .ctclaim .cl{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--teal-ink);margin-bottom:6px}
+  .ctclaim p{font-size:13.5px;color:#176055;margin:0;line-height:1.5}
+  .ctmaterial{border:1px solid var(--line);border-radius:11px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .ctmaterial svg{width:20px;height:20px;stroke:var(--teal-deep);flex:none}
+  .ctmaterial .mt{font-size:13.5px;font-weight:500;color:var(--ink)}
+  .ctmaterial .ms{font-size:11.5px;color:var(--ink-faint)}
+  .ctmaterial .view{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--teal-deep);flex:none}
+  .ctguard{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:12px;color:var(--ink-faint);line-height:1.5}
+  .ctguard svg{width:15px;height:15px;flex:none;margin-top:1px;stroke:var(--teal-deep)}
+  .ctactions{display:flex;gap:11px;margin-top:20px}
+  .ctactions button{font-size:13.5px;font-weight:500;border-radius:9px;padding:11px 18px;cursor:pointer;border:none}
+  .ctactions .ack{background:var(--teal);color:var(--navy)}
+  .ctactions .msg{background:#fff;color:var(--ink-soft);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <img class="logo" src="data:image/png;base64,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" alt="AiTHOS Sovereign Health">
+  <div class="toggle">
+    <button id="t-patient" class="on" onclick="show('patient')">Patient</button>
+    <button id="t-concierge" onclick="show('concierge')">Concierge</button>
+    <button id="t-admin" onclick="show('admin')">Admin</button>
+    <button id="t-careteam" onclick="show('careteam')">Care Team</button>
+    <button id="t-sponsor" onclick="show('sponsor')">Sponsor</button>
+    <button id="t-moat" onclick="show('moat')" style="color:var(--gold)">Why it wins</button>
+  </div>
+  <span class="badge">Agentic · Phase 1</span>
+</div></div>
+
+<!-- ===================== PATIENT ===================== -->
+<section id="patient" class="view show">
+  <div class="phero"><div class="wrap inner">
+    <h1>Health built around <em>you.</em></h1>
+    <p>A trusted way to organize your care.</p>
+  </div></div>
+  <div class="pshell railhidden" id="pshell">
+    <aside class="docrail" id="docrail">
+      <div class="railhead">
+        <div class="rl">Assets</div>
+        <button class="railclose" id="railclose" aria-label="Hide assets" onclick="toggleRail()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="docitems">
+        <div class="docitem" onclick="openHealthograph()"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="3,17 9,11 13,15 21,6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Healthograph</b><small>Your health signature</small></span></div>
+        <div class="docitem"><span class="di di-auth"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/><path d="M11 13h5M11 17h5" stroke-linecap="round"/></svg></span><span class="dt"><b>Authorization</b><small>Signed · § 164.524</small></span></div>
+        <div class="docitem"><span class="di di-fid"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Fiduciary Agreement</b><small>Signed</small></span></div>
+        <div class="docitem" id="rpt-asset"><span class="di di-prog"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8" stroke-linecap="round"/></svg></span><span class="dt"><b>RPT program</b><small id="rpt-asset-status">Available · not yet added</small></span></div>
+      </div>
+      <div class="railnote">Download or share any of these anytime. They stay yours, even if you leave.</div>
+    </aside>
+    <button class="railopen" id="railopen" aria-label="Show assets" onclick="toggleRail()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Assets</span></button>
+    <div class="pstreamcol">
+    <div class="wrap stream" style="padding:0">
+      <div class="daybar">Today</div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">relations agent · 8:02a</span></div>
+        <div class="bubble saira">
+          <div class="lead">Good morning. Here's where your Healthograph stands.</div>
+          <p>We've gathered records from <b>1 of your 4</b> places so far. I'm following up with the lab that's running late — you don't need to do anything there.</p>
+          <p>There's <b>one thing that would help me</b>, whenever you have a moment:</p>
+          <div class="prios">
+            <div class="prio"><span class="rank">1</span><div class="ptxt"><b>Choose who can see your Healthograph</b><div class="why">You mentioned wanting your cardiologist to have it — I can set that up once you confirm.</div></div><button class="act">Choose</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><img src="data:image/jpeg;base64,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" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--teal)"><small>Chandler</small></div>
+      <div class="body">
+        <div class="name">Chandler Schwede <span class="t">your concierge · 8:15a</span></div>
+        <div class="bubble">I'm here if anything feels unclear — just message me. SAiRA handles the gathering; I make sure it's right and answer your questions along the way.</div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">8:16a</span></div>
+        <div class="bubble saira">
+          <p>Here's your gathering, anytime you want to see it:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14" stroke-linejoin="round"/></svg>Your records</div>
+            <table><tbody>
+              <tr><td><span class="inst">Regional Medical Center</span><br><span class="itype">Hospital</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Bayside Family Practice</span><br><span class="itype">Primary care</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+              <tr><td><span class="inst">Meridian Diagnostics Lab</span><br><span class="itype">Laboratory</span></td><td style="text-align:right"><span class="st st-fu">Following up</span></td></tr>
+              <tr><td><span class="inst">Cedar Imaging Center</span><br><span class="itype">Imaging</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">8:18a · asking first</span></div>
+        <div class="bubble saira">
+          <p>One more thing, and it's entirely your choice. There's a heart-failure education program — the <b>RPT program, sponsored by Ancora Heart</b> — that's relevant to people managing a condition like yours. It helps you understand the range of treatment approaches and prepare questions for your cardiologist.</p>
+          <p>To be clear about what it is and isn't: it gives you <b>things to discuss with your care team</b> — it doesn't tell you what to do, and I won't either. Your team makes the medical calls. And the sponsor never sees your name or your records — only whether people find the program helpful, in aggregate.</p>
+          <div class="prios" id="rpt-consent-prios">
+            <div class="prio" id="rpt-prio-add"><span class="rank" style="background:#fff;color:var(--teal-deep)">?</span><div class="ptxt"><b>Add the RPT program to your Healthograph?</b><div class="why">Education and questions to bring to your doctor. Turn it off anytime.</div></div><button class="act" id="rpt-add-btn" onclick="addRPT()">Yes, add it</button></div>
+            <div class="prio" id="rpt-prio-tell"><span class="rank" style="background:#fff;color:var(--teal-deep)">+</span><div class="ptxt"><b>Also let your care team know you're interested?</b><div class="why">Separate choice. I'd tell your cardiologist you'd like to learn more — they decide what's right. You'll see exactly what I send.</div></div><button class="act">Sure</button></div>
+          </div>
+          <p style="font-size:12px;color:#9fc7d8;margin-top:11px">Either is optional. You can add the program without telling your team, or skip both — it changes nothing else about your care.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPT OPT-IN CONFIRMATION: SAiRA acknowledges the patient's choice -->
+    <div class="turn flowstep" id="rpt-confirm" style="display:none">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">just now</span></div>
+        <div class="bubble saira">
+          <p style="font-family:var(--serif);font-size:19px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:8px">Added. The RPT program is now in your Healthograph.</p>
+          <p>You'll find it in your <b>Assets</b> on the right, and you can turn it off anytime.</p>
+          <p style="margin-top:11px"><b>A few things this means — and doesn't mean:</b></p>
+          <ul style="margin:6px 0 4px 0;padding-left:22px;color:#dce8f7;font-size:13.5px">
+            <li>Your <b>care team hasn't been told</b> — that's a separate decision you haven't made yet.</li>
+            <li>The sponsor still <b>never sees you</b> — only that someone opted in, as one number in the aggregate.</li>
+            <li>This <b>doesn't change anything else</b> about your records or your care.</li>
+          </ul>
+          <p style="margin-top:11px;font-size:13px;color:#bccbe2">If you want to share your interest with your cardiologist, the "Sure" button above is still your call — entirely separate from this one.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WALL TEST: prove the boundary holds, on the patient's own ask -->
+    <div class="turn flowstep" id="pwall-q" style="display:none">
+      <div class="who" style="visibility:hidden"><span class="saira-orb"></span></div>
+      <div class="body" style="align-items:flex-end">
+        <div class="name" style="text-align:right">Melanie <span class="t">just now</span></div>
+        <div class="bubble" style="background:#eaf3fc;border-color:#cfe0f3" id="pwall-qtext">Can you summarize my last lab result?</div>
+      </div>
+    </div>
+
+    <div class="turn flowstep" id="pwall-a" style="display:none">
+      <div class="who"><span class="saira-orb"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">just now</span></div>
+        <div class="bubble saira">
+          <p><b>I can't see your records — that's by design.</b></p>
+          <p>Your lab results live in the secure record only you and the care team you've authorized can open. I coordinate the flow, but I never read the content. I'd rather you didn't either through me.</p>
+          <p>Here's what I <em>can</em> do:</p>
+          <ul style="margin:6px 0 4px 0;padding-left:22px;color:#dce8f7;font-size:13.5px">
+            <li>Open <b>Regional Medical Center</b> in your Records list — the result is there.</li>
+            <li>Help you <b>prepare a question</b> for your cardiologist. Paste the question (not the result), and I'll help you sharpen it.</li>
+            <li>Get the lab on the phone if anything's missing.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA or message Chandler…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="chips"><button onclick="askWallTest()">Summarize my last lab result</button><button onclick="openHealthograph()">What's a Healthograph?</button><button>Add a place I've been</button></div>
+    </div>
+    <p class="disclaim">AiTHOS provides informational support to help you organize and understand your health information. It does not provide medical advice and does not replace your care team.</p>
+  </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== CONCIERGE ===================== -->
+<section id="concierge" class="view">
+  <div class="cshell subjhidden" id="cshell">
+    <aside class="subjrail" id="subjrail">
+      <div class="railhead2">
+        <div class="rl">Subjects</div>
+        <button class="railclose2" aria-label="Hide subjects" onclick="toggleSubjects()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('cshell',this,'s01')"><span class="sc">S01</span><span class="sd"><b>Subject S01</b><small>Records gathering</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s02')"><span class="sc">S02</span><span class="sd"><b>Subject S02</b><small>Authorization pending</small></span><span class="dot dot-due"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s03')"><span class="sc">S03</span><span class="sd"><b>Subject S03</b><small>Ready for review</small></span><span class="dot dot-ok"></span></div>
+        <div class="subjitem" onclick="selectItem('cshell',this,'s04')"><span class="sc">S04</span><span class="sd"><b>Subject S04</b><small>Onboarding</small></span></div>
+      </div>
+      <button class="newbtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>New subject</button>
+      <div class="railnote2">Subjects shown by code. Names and all health content live in the secure record.</div>
+    </aside>
+    <button class="subjopen" id="subjopen" aria-label="Show subjects" onclick="toggleSubjects()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Subjects</span></button>
+    <div class="cstreamcol">
+    <div class="wrap stream" style="padding:0">
+    <div class="panel" data-panel="s01">
+    <div class="daybar">Monday · your morning briefing</div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">relations agent · 7:30a</span></div>
+        <div class="bubble saira">
+          <div class="lead">Morning, Chandler. 3 subjects active. Here's where your time matters most today.</div>
+          <p>Overnight I sent 2 follow-ups, logged 1 received record, and advanced nothing past a gate without you. Three things ranked by what's blocking progress:</p>
+          <div class="prios">
+            <div class="prio flag"><span class="rank">1</span><div class="ptxt"><b>S03 — assembled file ready for your review</b><div class="why">All 5 sources in. Needs your sign-off before it goes to Healthograph creation.</div></div><button class="act">Review</button></div>
+            <div class="prio"><span class="rank">2</span><div class="ptxt"><b>S01 — lab is 32 days out</b><div class="why">Past the 30-day window. I've drafted a follow-up — just approve to send.</div></div><button class="act" id="s01-approve" onclick="startS01Flow()">Approve</button></div>
+            <div class="prio"><span class="rank">3</span><div class="ptxt"><b>S02 — authorization not yet signed</b><div class="why">No requests can go out until it's captured. Nudge the patient?</div></div><button class="act">Draft</button></div>
+          </div>
+          <p style="font-size:12.5px;color:#9fc7d8;margin-top:13px">Nothing else needs you. I'll keep gathering and flag anything new.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S01</span></div>
+        <div class="bubble saira">
+          <p>Here's the S01 tracker so you can see why the lab is the holdup:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S01 · records tracker</div>
+            <table><tbody>
+              <tr><td><span class="inst">Regional Medical Center</span><br><span class="itype">Hospital · Apr 28</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Bayside Family Practice</span><br><span class="itype">Primary care · May 6</span></td><td style="text-align:right"><span class="st st-req">Requested</span></td></tr>
+              <tr id="s01-labrow"><td><span class="inst">Meridian Diagnostics Lab</span><br><span class="itype">Lab · Apr 22</span></td><td style="text-align:right"><span class="st st-fu" id="s01-labstatus">Due · 32d</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE FLOW: draft → send → received → unblocked -->
+    <div class="turn flowstep" id="s01-draftturn" style="display:none">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t" id="s01-drafttime">drafting…</span></div>
+        <div class="bubble saira">
+          <p id="s01-draftintro">Here's the follow-up for Meridian Diagnostics Lab, ready to send under the patient's §164.524 access right:</p>
+          <div class="draftcard" id="s01-draftcard">
+            <div class="drafthd"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 4h16v16H4z" stroke-linejoin="round"/><path d="M4 8h16M8 4v16" stroke-linecap="round"/></svg>Follow-up · Meridian Diagnostics Lab</div>
+            <div class="draftbody" id="s01-drafttext"></div>
+          </div>
+          <div class="flowactions" id="s01-draftactions" style="display:none">
+            <button class="approve" onclick="sendS01()">Send follow-up</button>
+            <button class="open" onclick="editS01()">Edit first</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn flowstep" id="s01-sentturn" style="display:none">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">just now</span></div>
+        <div class="bubble saira">
+          <p><b>Sent.</b> I've logged it and I'm tracking the response. I'll flip the status the moment records arrive — you don't need to watch for it.</p>
+          <div class="sendconfirm"><span class="spinner" id="s01-spinner"></span><span id="s01-sendmsg">Delivered to Meridian ROI · awaiting records…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="turn flowstep" id="s01-receivedturn" style="display:none">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">moments later</span></div>
+        <div class="bubble saira">
+          <div class="lead" style="font-size:18px">Records received from Meridian. S01 is now complete.</div>
+          <p>All three sources are in. That clears the last gap on S01 — it's ready to assemble. And with S03 already waiting on your review, here's what needs you next:</p>
+          <div class="prios">
+            <div class="prio flag"><span class="rank">1</span><div class="ptxt"><b>S03 — assembled file ready for your review</b><div class="why">Now your top item. Sign-off sends it to Healthograph creation.</div></div><button class="act" onclick="selectItem('cshell',document.querySelector('#cshell .subjitem:nth-child(3)'),'s03')">Review S03</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s01 -->
+
+    <div class="panel" data-panel="s02" style="display:none">
+    <div class="daybar">Subject S02 · authorization pending</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S02</span></div>
+        <div class="bubble saira">
+          <div class="lead">S02 is waiting on one thing before anything can move.</div>
+          <p>The patient hasn't signed the §164.524 authorization yet — so no records requests can go out. This is the gate; once it's captured, I can send all four requests the same day.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Blocked — authorization not yet captured</div>
+            <p>Nothing requested yet. The patient listed 4 sources during onboarding; I have them ready to go.</p>
+            <div class="gact"><button class="approve">Draft a friendly nudge</button><button class="open">Open authorization</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">sources on file</span></div>
+        <div class="bubble saira">
+          <p>The 4 sources S02 named, ready to request the moment the authorization is in:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S02 · sources (pending authorization)</div>
+            <table><tbody>
+              <tr><td><span class="inst">Lakeside Cardiology</span><br><span class="itype">Specialist</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">St. Mary's Hospital</span><br><span class="itype">Hospital</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">Grove Primary Care</span><br><span class="itype">Primary care</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+              <tr><td><span class="inst">Northside Imaging</span><br><span class="itype">Imaging</span></td><td style="text-align:right"><span class="st st-req">Pending auth</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s02 -->
+
+    <div class="panel" data-panel="s03" style="display:none">
+    <div class="daybar">Subject S03 · ready for review</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S03</span></div>
+        <div class="bubble saira">
+          <div class="lead">S03 is your top priority today — the file is complete and waiting on you.</div>
+          <p>All 5 sources are in and checked against the original list. Before it leaves my hands and goes to Healthograph creation, you confirm it's complete with the patient — that's your call, not mine.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Review gate — human sign-off required</div>
+            <p>5 of 5 sources received and checked against the original list. Patient hasn't yet confirmed completeness with you.</p>
+            <div class="gact"><button class="approve">Open file to review</button><button class="open">Message patient to confirm</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">S03 tracker</span></div>
+        <div class="bubble saira">
+          <p>Everything's accounted for:</p>
+          <div class="summon">
+            <div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>S03 · records tracker — complete</div>
+            <table><tbody>
+              <tr><td><span class="inst">University Medical Center</span><br><span class="itype">Hospital · Apr 12</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Ridgeline Cardiology</span><br><span class="itype">Specialist · Apr 15</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Valley Primary Care</span><br><span class="itype">Primary care · Apr 18</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Quest Laboratory</span><br><span class="itype">Lab · Apr 20</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+              <tr><td><span class="inst">Summit Imaging</span><br><span class="itype">Imaging · Apr 24</span></td><td style="text-align:right"><span class="st st-rc">Received</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s03 -->
+
+    <div class="panel" data-panel="s04" style="display:none">
+    <div class="daybar">Subject S04 · onboarding</div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">on S04</span></div>
+        <div class="bubble saira">
+          <div class="lead">S04 just started — we're in the welcome stage.</div>
+          <p>You've had the welcome conversation; next is listing every place that holds their records, then capturing the authorization. I'll guide the source-listing whenever you're ready, and I'll surface the sensitive-category check before any requests go out.</p>
+          <div class="gate">
+            <div class="gh"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg>Next step — list the sources together</div>
+            <p>No authorization yet, no requests yet. Onboarding checklist: welcome ✓ · source list ◯ · sensitive-category check ◯ · authorization ◯</p>
+            <div class="gact"><button class="approve">Start source-listing</button><button class="open">Open onboarding script</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="turn">
+      <div class="who"><span class="saira-orb sm"></span></div>
+      <div class="body">
+        <div class="name">SAiRA <span class="t">reminder</span></div>
+        <div class="bubble saira">
+          <p>When we list sources, I'll prompt the sensitive-category question — mental/behavioral health, substance-use (42 CFR Part 2), HIV, genetic — so the right consent is in place up front rather than discovered mid-process.</p>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s04 -->
+
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA to draft, summarize, or pull up a subject…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="chips"><button onclick="startS01Flow()">Draft the S01 follow-up</button><button onclick="selectItem('cshell',document.querySelector('#cshell .subjitem:nth-child(3)'),'s03')">Open S03 for review</button><button>What's stalled this week?</button></div>
+    </div>
+    <p class="footnote">Coordination only · subjects by code · record content stays in the secure record · SAiRA recommends, you decide</p>
+  </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOSPITAL ADMIN ===================== -->
+<section id="admin" class="view">
+  <div class="cshell subjhidden" id="ashell">
+    <aside class="subjrail">
+      <div class="railhead2">
+        <div class="rl">Pending delivery</div>
+        <button class="railclose2" aria-label="Hide queue" onclick="toggleSubjects('ashell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('ashell',this,'rq1')"><span class="sc">RQ1</span><span class="sd"><b>M. Miles</b><small>Awaiting transmit · 2d</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ashell',this,'rq2')"><span class="sc">RQ2</span><span class="sd"><b>J. Alvarez</b><small>Awaiting transmit · 5d</small></span><span class="dot dot-due"></span></div>
+        <div class="subjitem" onclick="selectItem('ashell',this,'rq3')"><span class="sc">RQ3</span><span class="sd"><b>R. Okeke</b><small>Delivered ✓</small></span><span class="dot dot-ok"></span></div>
+      </div>
+      <div class="railnote2">Only patients with an active delivery request to your facility appear here. Ranked by what's most overdue.</div>
+    </aside>
+    <button class="subjopen" aria-label="Show queue" onclick="toggleSubjects('ashell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Queue</span></button>
+    <div class="cstreamcol">
+  <div class="panel" data-panel="rq1">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Secure request from</small><b>SAiRA</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">Received in your Release of Information inbox</p>
+
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-directed records request · 45 C.F.R. § 164.524</div>
+        <h2>A patient has asked AiTHOS to gather their records — and invited you to deliver securely.</h2>
+        <p>You're invited to transmit the records below directly into <b>this patient's secure AiTHOS environment</b>. No fax, no mail, no portal export — a direct, encrypted, deliver-only channel.</p>
+      </div>
+      <div class="ibody">
+
+        <div class="rowline"><span class="k">Patient</span><span class="v">Verified on file · authorization attached</span></div>
+        <div class="rowline"><span class="k">Authorizing document</span><span class="v">Signed § 164.524 patient authorization</span></div>
+        <div class="rowline"><span class="k">Requested by</span><span class="v">AiTHOS, at the patient's direction</span></div>
+        <div class="rowline"><span class="k">Your identity</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified — ROI authorized</span></span></div>
+
+        <div class="whatbox">
+          <div class="wl">Health data requested</div>
+          <div class="reqtags">
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Visit &amp; encounter records</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 3v6l-5 9a2 2 0 002 3h12a2 2 0 002-3l-5-9V3" stroke-linejoin="round"/></svg>Laboratory &amp; pathology</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Imaging &amp; reports</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Medications &amp; procedures</span>
+          </div>
+          <p class="daterange">Date range: <b>All available records</b> · Patient: <b>Subject on file (verified)</b></p>
+        </div>
+
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>What this access lets you do</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Deliver only.</b> Upload records into this one patient's environment.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Time-limited.</b> This link expires in 14 days.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No browsing.</b> You can't view other patients or any existing data.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Every action is recorded for the audit trail.</span></div>
+          </div>
+        </div>
+
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2" stroke-linecap="round"/></svg>Transmit records securely</button>
+          <button class="decline">Need their own form</button>
+        </div>
+
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Encrypted, deliver-only channel into the patient's secure AiTHOS environment. AiTHOS coordinates the request; the records you send go straight to the patient's record and are never handled by the assistant. If your facility requires its own release form, choose "Need their own form" and SAiRA will adapt.</span>
+        </div>
+
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq1 -->
+
+  <div class="panel" data-panel="rq2" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Secure request from</small><b>SAiRA</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">Received in your Release of Information inbox · open 5 days</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-directed records request · 45 C.F.R. § 164.524</div>
+        <h2>J. Alvarez has asked AiTHOS to gather their records — and invited you to deliver securely.</h2>
+        <p>You're invited to transmit the records below directly into <b>this patient's secure AiTHOS environment</b>. This request has been open 5 days — a gentle reminder from their concierge.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Verified on file · authorization attached</span></div>
+        <div class="rowline"><span class="k">Authorizing document</span><span class="v">Signed § 164.524 patient authorization</span></div>
+        <div class="rowline"><span class="k">Requested by</span><span class="v">AiTHOS, at the patient's direction</span></div>
+        <div class="rowline"><span class="k">Your identity</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified — ROI authorized</span></span></div>
+        <div class="whatbox">
+          <div class="wl">Health data requested</div>
+          <div class="reqtags">
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>Visit &amp; encounter records</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Imaging &amp; reports</span>
+            <span class="reqtag"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Medications &amp; procedures</span>
+          </div>
+          <p class="daterange">Date range: <b>Last 5 years</b> · Patient: <b>Subject on file (verified)</b></p>
+        </div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>What this access lets you do</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Deliver only.</b> Upload records into this one patient's environment.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Time-limited.</b> This link expires in 9 days.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No browsing.</b> You can't view other patients or any existing data.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Every action is recorded for the audit trail.</span></div>
+          </div>
+        </div>
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2" stroke-linecap="round"/></svg>Transmit records securely</button>
+          <button class="decline">Need their own form</button>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Encrypted, deliver-only channel into the patient's secure AiTHOS environment. AiTHOS coordinates the request; the records you send go straight to the patient's record and are never handled by the assistant.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq2 -->
+
+  <div class="panel" data-panel="rq3" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Completed delivery</small><b>SAiRA</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">This request is complete — no action needed</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Delivered · 45 C.F.R. § 164.524</div>
+        <h2>Records for R. Okeke were delivered successfully. Thank you.</h2>
+        <p>You transmitted these records securely into the patient's AiTHOS environment. A receipt is on file in your activity log.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Status</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Delivered — Apr 30</span></span></div>
+        <div class="rowline"><span class="k">Delivered by</span><span class="v">Your ROI office (verified)</span></div>
+        <div class="rowline"><span class="k">What was sent</span><span class="v">Visit records, labs, imaging</span></div>
+        <div class="rowline"><span class="k">Logged</span><span class="v">Receipt in audit trail</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Delivery summary</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Complete.</b> All requested records transmitted.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v4H4zM4 12h16M4 18h16" stroke-linecap="round"/></svg><span><b>Logged.</b> Receipt recorded in the audit trail.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Access closed.</b> The deliver-only link has expired.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Secure.</b> Records went straight to the patient's record.</span></div>
+          </div>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Nothing further is needed from you for this patient. If the patient requests additional records later, a new secure invitation will appear here.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use</p>
+  </div>
+  </div><!-- /rq3 -->
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    </div><!-- /cstreamcol -->
+  </div><!-- /ashell -->
+</section>
+
+<!-- ===================== SPONSOR ===================== -->
+<section id="sponsor" class="view">
+  <div class="phero sponhero"><div class="wrap inner">
+    <h1>Support patients <em>on their terms.</em></h1>
+    <div class="spon-org">Sponsoring organization · <b>Ancora Heart</b></div>
+  </div></div>
+  <div class="pshell railhidden" id="sshell">
+    <div class="pstreamcol">
+    <div class="sponwrap" style="max-width:none;padding:24px 0 40px">
+      <div class="sponhead" style="margin-bottom:4px">
+        <div>
+          <h2 style="font-family:var(--serif);font-size:24px;color:var(--ink);font-weight:600;margin:0">RPT Program — Heart Failure (HFrEF)</h2>
+        </div>
+      </div>
+
+      <div class="turn" style="margin-top:18px">
+        <div class="who"><span class="saira-orb lg"></span><small>SAiRA</small></div>
+        <div class="body">
+          <div class="name">SAiRA <span class="t">your program liaison · <span id="saira-range">this quarter</span></span></div>
+          <div class="bubble saira">
+            <div class="lead">Welcome back. Here's how the RPT program is helping patients.</div>
+            <p>I offered it to <b>284 patients</b> who agreed to hear about it; <b>240 chose to add it</b>, and most are using it to prepare questions for their doctors. CORCINCH-HF enrollment is close to target.</p>
+            <p style="margin-top:11px;padding-top:10px;border-top:1px solid rgba(255,255,255,.14);font-size:13px;color:#9fc7d8">I work for the patients, not the program. You'll always get the aggregate picture — never anyone's identity or records, and I never deploy to anyone who hasn't said yes. Full reports are in the panel on the right.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <span class="seglabel">Time range</span>
+        <div class="seg"><button id="rng-30" onclick="setRange('30')">30 days</button><button id="rng-q" class="on" onclick="setRange('q')">This quarter</button><button id="rng-all" onclick="setRange('all')">All time</button></div>
+      </div>
+
+      <div class="spon-metrics">
+        <div class="smetric"><div class="k">Eligible</div><div class="v" id="m-elig">312</div><div class="d">meet criteria</div></div>
+        <div class="smetric"><div class="k">Offered</div><div class="v" id="m-off">284</div><div class="d" id="m-off-d">91% of eligible</div></div>
+        <div class="smetric"><div class="k">Opted in</div><div class="v" id="m-opt">240</div><div class="d" id="m-opt-d">85% of offered</div></div>
+        <div class="smetric"><div class="k">Active</div><div class="v" id="m-act">198</div><div class="d" id="m-act-d">83% of opted-in</div></div>
+      </div>
+
+      <div class="scard" style="margin-top:16px">
+        <div class="sch">CORCINCH-HF enrollment <span class="agtag" id="t-rangetag">This quarter</span></div>
+        <div class="scb">
+          <div class="trialnums">
+            <div class="tn"><div class="tnv" id="t-cons">38</div><div class="tnl">Consented</div></div>
+            <div class="tn"><div class="tnv" id="t-scr">21</div><div class="tnl">In-Screening</div></div>
+            <div class="tn"><div class="tnv" id="t-rand">12</div><div class="tnl">Randomized<br>(Treatment or Control)</div></div>
+          </div>
+          <div class="trendwrap">
+            <div class="tcap"><span>Cumulative enrollment</span><b id="t-captarget">12 randomized</b></div>
+            <svg viewBox="0 0 360 130" width="100%" height="130" preserveAspectRatio="none" role="img" aria-label="Cumulative enrollment over time">
+              <line x1="0" y1="10" x2="360" y2="10" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="45" x2="360" y2="45" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="80" x2="360" y2="80" stroke="#e4ecf4" stroke-width="1"/>
+              <line x1="0" y1="115" x2="360" y2="115" stroke="#e4ecf4" stroke-width="1"/>
+              <polyline points="0,115 60,104 120,88 180,70 240,52 300,40 360,30" fill="none" stroke="#0c2350" stroke-width="2.5"/>
+              <polyline points="0,117 60,110 120,99 180,86 240,72 300,62 360,54" fill="none" stroke="#1ba898" stroke-width="2.5"/>
+              <polyline points="0,119 60,115 120,109 180,99 240,87 300,77 360,66" fill="none" stroke="#3dd6c4" stroke-width="2.5"/>
+              <circle cx="360" cy="30" r="3.5" fill="#0c2350"/>
+              <circle cx="360" cy="54" r="3.5" fill="#1ba898"/>
+              <circle cx="360" cy="66" r="3.5" fill="#3dd6c4"/>
+            </svg>
+            <div class="legend">
+              <span><i style="border-color:#0c2350"></i>Consented</span>
+              <span><i style="border-color:#1ba898"></i>In-Screening</span>
+              <span><i style="border-color:#3dd6c4"></i>Randomized</span>
+            </div>
+            <p class="suppress">Treatment and control assignments are blinded. The randomized number combines both groups.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="box">
+          <input placeholder="Ask SAiRA…">
+          <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+
+      <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health Network · Phase 1 · Confidential mockup — not for patient use</p>
+    </div>
+    </div>
+
+    <aside class="docrail" id="sponrail">
+      <div class="railhead">
+        <div class="rl">Reports</div>
+        <button class="railclose" aria-label="Hide reports" onclick="toggleRail('sshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="docitems">
+        <div class="docitem" onclick="openReport('funnel')"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4" stroke-linecap="round"/></svg></span><span class="dt"><b>Engagement funnel</b><small>Eligible → prepared</small></span></div>
+        <div class="docitem" onclick="openReport('cohort')"><span class="di di-auth"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-linecap="round"/></svg></span><span class="dt"><b>Who's engaging</b><small>De-identified shape</small></span></div>
+        <div class="docitem" onclick="openReport('themes')"><span class="di di-fid"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-6A8.4 8.4 0 1 1 21 11.5z" stroke-linejoin="round"/></svg></span><span class="dt"><b>What patients ask</b><small>Question themes</small></span></div>
+        <div class="docitem" onclick="openReport('gov')"><span class="di di-prog"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg></span><span class="dt"><b>How data is protected</b><small>Privacy controls</small></span></div>
+        <div class="docitem" onclick="openReport('export')"><span class="di di-graph"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="dt"><b>Export report</b><small>Aggregate PDF</small></span></div>
+      </div>
+      <div class="railnote">Aggregate and de-identified. Small groups (under 5) are hidden so no one can be identified.</div>
+    </aside>
+    <button class="railopen" id="sponopen" aria-label="Show reports" onclick="toggleRail('sshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Reports</span></button>
+  </div>
+
+  <!-- report modal -->
+  <div id="reportModal" class="rmodal" style="display:none" onclick="closeReport(event)">
+    <div class="rmbox" onclick="event.stopPropagation()">
+      <button class="rmclose" onclick="closeReport()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>
+      <div id="rm-funnel" class="rmpanel">
+        <h2>Engagement funnel</h2>
+        <p class="rmsub">How patients move from eligible to prepared — every step is the patient's choice.</p>
+        <div class="funnel">
+          <div class="frow"><span class="fl">Eligible</span><span class="fbar"><span style="width:100%"></span></span><span class="fv">312</span><span class="fconv">—</span></div>
+          <div class="frow"><span class="fl">Offered</span><span class="fbar"><span style="width:91%"></span></span><span class="fv">284</span><span class="fconv">91%</span></div>
+          <div class="frow"><span class="fl">Opted in</span><span class="fbar"><span style="width:77%"></span></span><span class="fv">240</span><span class="fconv">85%</span></div>
+          <div class="frow"><span class="fl">Active</span><span class="fbar"><span style="width:63%"></span></span><span class="fv">198</span><span class="fconv">83%</span></div>
+          <div class="frow"><span class="fl">Prepared questions</span><span class="fbar"><span style="width:58%"></span></span><span class="fv">182</span><span class="fconv">92%</span></div>
+        </div>
+        <div class="defs">
+          <div class="defrow"><b>Eligible</b><span>Patients who match the program's criteria. No one's been contacted yet.</span></div>
+          <div class="defrow"><b>Offered</b><span>Patients SAiRA asked, with their permission to be told about it.</span></div>
+          <div class="defrow"><b>Opted in</b><span>Patients who said yes and added it. The drop here is patients freely choosing.</span></div>
+          <div class="defrow"><b>Active</b><span>Patients actually using the material.</span></div>
+          <div class="defrow"><b>Prepared questions</b><span>Patients who used it to bring questions to their own doctor — the goal.</span></div>
+        </div>
+      </div>
+      <div id="rm-cohort" class="rmpanel" style="display:none">
+        <h2>Who's engaging</h2>
+        <p class="rmsub">The de-identified shape of the group using the program. No individuals — small groups are hidden.</p>
+        <div class="bardist">
+          <div class="bd-label">Age</div>
+          <div class="bdrow"><span class="bl">45–54</span><span class="bbar"><span style="width:22%"></span></span><span class="bv">22%</span></div>
+          <div class="bdrow"><span class="bl">55–64</span><span class="bbar"><span style="width:38%"></span></span><span class="bv">38%</span></div>
+          <div class="bdrow"><span class="bl">65–74</span><span class="bbar"><span style="width:28%"></span></span><span class="bv">28%</span></div>
+          <div class="bdrow"><span class="bl">75+</span><span class="bbar"><span style="width:12%"></span></span><span class="bv">12%</span></div>
+          <div class="bd-label" style="margin-top:14px">Heart failure stage (NYHA)</div>
+          <div class="bdrow"><span class="bl">Class II</span><span class="bbar"><span style="width:46%"></span></span><span class="bv">46%</span></div>
+          <div class="bdrow"><span class="bl">Class III</span><span class="bbar"><span style="width:41%"></span></span><span class="bv">41%</span></div>
+          <div class="bdrow"><span class="bl">Class IV</span><span class="bbar"><span style="width:0"></span></span><span class="bv" style="color:var(--ink-faint)">&lt;5 · hidden</span></div>
+        </div>
+      </div>
+      <div id="rm-themes" class="rmpanel" style="display:none">
+        <h2>What patients ask</h2>
+        <p class="rmsub">The themes patients want to discuss with their care team. Helps shape better material — no individual quotes.</p>
+        <div class="bardist">
+          <div class="bdrow"><span class="bl" style="width:150px">Recovery &amp; what to expect</span><span class="bbar"><span style="width:64%"></span></span><span class="bv">64%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Am I a candidate?</span><span class="bbar"><span style="width:52%"></span></span><span class="bv">52%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Alternatives &amp; options</span><span class="bbar"><span style="width:43%"></span></span><span class="bv">43%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Risks &amp; side effects</span><span class="bbar"><span style="width:38%"></span></span><span class="bv">38%</span></div>
+          <div class="bdrow"><span class="bl" style="width:150px">Cost &amp; coverage</span><span class="bbar"><span style="width:29%"></span></span><span class="bv">29%</span></div>
+        </div>
+      </div>
+      <div id="rm-gov" class="rmpanel" style="display:none">
+        <h2>How data is protected</h2>
+        <p class="rmsub">These are built-in controls, not just promises.</p>
+        <div class="gov-grid" style="margin-top:6px">
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Consent first.</b> Every patient was asked and chose to take part.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8" stroke-linecap="round"/></svg><span><b>Small groups hidden.</b> Anything under 5 people is not shown.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>No identities.</b> No names, records, or individual data — ever.</span></div>
+          <div class="govitem dark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span><b>Updated daily.</b> Figures refresh each day.</span></div>
+        </div>
+      </div>
+      <div id="rm-export" class="rmpanel" style="display:none">
+        <h2>Export report</h2>
+        <p class="rmsub">Download an aggregate, de-identified summary for your records.</p>
+        <button class="auth-act" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" stroke-linecap="round" stroke-linejoin="round"/></svg>Download PDF summary</button>
+        <button class="auth-act" style="margin-top:10px;background:#fff;color:var(--ink);border:1px solid var(--line)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>Email me a weekly digest</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== CARE TEAM ===================== -->
+<section id="careteam" class="view">
+  <div class="cshell subjhidden" id="ctshell">
+    <aside class="subjrail">
+      <div class="railhead2">
+        <div class="rl">Your patients</div>
+        <button class="railclose2" aria-label="Hide patients" onclick="toggleSubjects('ctshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="subjitems">
+        <div class="subjitem on" onclick="selectItem('ctshell',this,'mm')"><span class="sc">MM</span><span class="sd"><b>M. Miles</b><small>Expressed interest · new</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ctshell',this,'ja')"><span class="sc">JA</span><span class="sd"><b>J. Alvarez</b><small>Healthograph shared</small></span><span class="dot dot-fu"></span></div>
+        <div class="subjitem" onclick="selectItem('ctshell',this,'ro')"><span class="sc">RO</span><span class="sd"><b>R. Okeke</b><small>Acknowledged ✓</small></span><span class="dot dot-ok"></span></div>
+      </div>
+      <div class="railnote2">Your own patients who've shared something with you, newest first. Order reflects what's awaiting you — never a clinical priority.</div>
+    </aside>
+    <button class="subjopen" aria-label="Show patients" onclick="toggleSubjects('ctshell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg><span>Patients</span></button>
+    <div class="cstreamcol">
+  <div class="panel" data-panel="mm">
+  <div class="adminwrap" style="padding-top:8px">
+
+    <!-- LAYERED: Healthograph share — appears when patient shares from the Healthograph modal -->
+    <div class="flowstep" id="mm-hgshare" style="display:none">
+      <div class="adminhead">
+        <div class="from">
+          <span class="saira-orb"></span>
+          <span class="from"><span><small>Just shared by your patient</small><b>SAiRA · on behalf of your patient</b></span></span>
+        </div>
+        <span class="verified" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>New · just now</span>
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">For: the patient's care team · shared with the patient's consent</p>
+      <div class="invite" style="border-color:#bfe9e0;box-shadow:0 8px 30px rgba(27,168,152,.18)">
+        <div class="ih">
+          <div class="tagline"><span class="saira-orb sm"></span>Patient shared their Healthograph · with consent</div>
+          <h2>M. Miles chose to share their Healthograph with you ahead of your next visit.</h2>
+          <p>Your patient assembled their records into a single Healthograph through AiTHOS and chose to make it available to you. They prepared questions they'd like to discuss. <b>You see exactly what they see.</b></p>
+        </div>
+        <div class="ibody">
+          <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+          <div class="rowline"><span class="k">What they shared</span><span class="v">Their assembled Healthograph · 5 sources, complete</span></div>
+          <div class="rowline"><span class="k">Why</span><span class="v">To prepare for their next appointment with you</span></div>
+          <div class="rowline"><span class="k">Questions prepared</span><span class="v">4 questions for discussion</span></div>
+          <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Organize &amp; route — no clinical interpretation</span></div>
+
+          <div class="scopebox">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this share is — and isn't</h3>
+            <div class="scope-grid">
+              <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> a patient-organized summary they chose to send.</span></div>
+              <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a clinical assessment or a substitute for the chart.</span></div>
+              <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-controlled:</b> they sent it, and they can withdraw access.</span></div>
+              <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> no third party has access.</span></div>
+            </div>
+          </div>
+
+          <div class="adminact">
+            <button class="deliver" onclick="openHealthograph()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="3,17 9,11 13,15 21,6" stroke-linecap="round" stroke-linejoin="round"/></svg>View the Healthograph</button>
+            <button class="decline">Acknowledge</button>
+          </div>
+
+          <div class="securenote">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+            <span>You see exactly the same artifact your patient sees. AiTHOS organizes and routes; the clinical judgment, and the relationship, remain yours. The patient controls what's shared and can withdraw access anytime.</span>
+          </div>
+        </div>
+      </div>
+      <div style="height:24px;border-bottom:1px solid var(--line);margin-bottom:24px"></div>
+    </div>
+
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Note from</small><b>SAiRA · on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">For: the patient's care team · shared with the patient's consent</p>
+
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient-expressed interest · not a recommendation</div>
+        <h2>Your patient asked to learn more about a heart-failure therapy.</h2>
+        <p>They opted in to the <b>RPT educational program (sponsored by Ancora Heart)</b> and chose to let you know. We're sharing their interest so you can guide the conversation — <b>any clinical decision is yours.</b></p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">What they did</span><span class="v">Reviewed RPT educational material</span></div>
+        <div class="rowline"><span class="k">What they're asking</span><span class="v">To understand options &amp; bring questions to you</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Inform only — no clinical recommendation</span></div>
+
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> your patient is curious and wants to discuss it with you.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a suggestion that they're a candidate, or any clinical advice.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-initiated:</b> they raised their hand; we didn't push.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> Ancora gets no identities, ever.</span></div>
+          </div>
+        </div>
+
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>View the material they saw</button>
+          <button class="decline">Acknowledge</button>
+        </div>
+
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>The patient saw this exact note before it reached you — they control what's shared. AiTHOS surfaces their interest; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /mm -->
+
+  <div class="panel" data-panel="ja" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Note from</small><b>SAiRA · on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">For: the patient's care team · shared with the patient's consent</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Patient shared their Healthograph · with consent</div>
+        <h2>J. Alvarez chose to share their Healthograph with you.</h2>
+        <p>Your patient assembled their records into a single Healthograph through AiTHOS and chose to make it available to you ahead of their next visit.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">What they shared</span><span class="v">Their assembled Healthograph</span></div>
+        <div class="rowline"><span class="k">Why</span><span class="v">To prepare for their next appointment</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Organize &amp; route — no clinical interpretation</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> a patient-organized summary they chose to share.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a clinical assessment or a substitute for the chart.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-controlled:</b> they chose to share it and can revoke.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> no third party has access.</span></div>
+          </div>
+        </div>
+        <div class="adminact">
+          <button class="deliver"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 3v5h5M7 3h8l5 5v13H7z" stroke-linejoin="round"/></svg>View the Healthograph</button>
+          <button class="decline">Acknowledge</button>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>The patient controls what's shared and can withdraw access anytime. AiTHOS organizes and routes; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /ja -->
+
+  <div class="panel" data-panel="ro" style="display:none">
+  <div class="adminwrap" style="padding-top:8px">
+    <div class="adminhead">
+      <div class="from">
+        <span class="saira-orb"></span>
+        <span class="from"><span><small>Acknowledged</small><b>SAiRA · on behalf of your patient</b></span></span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft);margin:4px 0 4px">You've acknowledged this — no action needed</p>
+    <div class="invite">
+      <div class="ih">
+        <div class="tagline"><span class="saira-orb sm"></span>Acknowledged · patient-expressed interest</div>
+        <h2>You acknowledged R. Okeke's interest in a heart-failure therapy.</h2>
+        <p>Your patient expressed interest in the RPT educational program and consented to let you know. You acknowledged it on Apr 26 — it will come up at their next visit.</p>
+      </div>
+      <div class="ibody">
+        <div class="rowline"><span class="k">Patient</span><span class="v">Identified in your records · consent on file</span></div>
+        <div class="rowline"><span class="k">Status</span><span class="v"><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Acknowledged — Apr 26</span></span></div>
+        <div class="rowline"><span class="k">What they're asking</span><span class="v">To discuss options with you</span></div>
+        <div class="rowline"><span class="k">AiTHOS's role</span><span class="v">Inform only — no clinical recommendation</span></div>
+        <div class="scopebox">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>What this note is — and isn't</h3>
+          <div class="scope-grid">
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Is:</b> your patient's curiosity, noted for your conversation.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span><b>Isn't:</b> a candidacy judgment or clinical advice.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg><span><b>Patient-initiated:</b> they raised their hand; we didn't push.</span></div>
+            <div class="scopeitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg><span><b>Sponsor sees nothing:</b> Ancora gets no identities, ever.</span></div>
+          </div>
+        </div>
+        <div class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+          <span>Nothing further is needed. The interest is noted for your next visit; the clinical judgment, and the relationship, remain yours.</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote" style="margin-top:18px">AiTHOS · Sovereign Health · Phase 1 validation · Confidential mockup — not for patient use · Care-team disclosure subject to patient consent &amp; counsel review</p>
+  </div>
+  </div><!-- /ro -->
+    <div class="composer">
+      <div class="box">
+        <input placeholder="Ask SAiRA…">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    </div><!-- /cstreamcol -->
+  </div><!-- /ctshell -->
+</section>
+
+<!-- ===================== WHY IT WINS (MOAT) ===================== -->
+<section id="moat" class="view">
+  <div class="phero sponhero"><div class="wrap inner">
+    <h1>The boundary <em>is</em> the moat.</h1>
+    <div class="spon-org">AiTHOS wins where incumbents structurally cannot</div>
+  </div></div>
+  <div class="moatwrap">
+    <div class="moat-eyebrow">The architecture, as a business advantage</div>
+    <div class="moat-lede">One design lets AiTHOS make three promises at once.</div>
+    <p class="moat-sub">SAiRA coordinates the entire flow but never sees a patient's records. That single architectural choice — coordination-without-access — is what lets AiTHOS hold three commitments simultaneously. Most competitors can hold any two. Holding all three is the moat.</p>
+
+    <div class="promises">
+      <div class="promise">
+        <div class="pnum">Promise 1</div>
+        <h3>Patients trust us</h3>
+        <p>The patient is the principal. Their records never enter a chatbot, never train a model, and never reach a sponsor. They own the Healthograph and control every share.</p>
+        <div class="who">→ earns patient adoption</div>
+      </div>
+      <div class="promise">
+        <div class="pnum">Promise 2</div>
+        <h3>Sponsors fund us</h3>
+        <p>Sponsors get real, aggregate, de-identified insight into how their programs help — enough to justify funding patient care, with no identities and no ability to direct it.</p>
+        <div class="who">→ creates the revenue engine</div>
+      </div>
+      <div class="promise">
+        <div class="pnum">Promise 3</div>
+        <h3>Regulators clear us</h3>
+        <p>Built on the patient's own right of access (§164.524), with the AI walled off from PHI by design. The controls are engineered, auditable, and survive scrutiny — not just promised.</p>
+        <div class="who">→ de-risks the whole model</div>
+      </div>
+    </div>
+    <div class="moat-and">— and all three at the same time —</div>
+
+    <div class="moat-claim">
+      <div class="mc-h">Why this is defensible, not just principled.</div>
+      <p>An incumbent that lets its model read records can build a slick assistant — but it can't tell patients their data stays private, and it inherits every liability of an AI touching PHI. An EHR or payer can reach providers — but it serves providers and payers, <b>not the patient</b>, so it can't credibly be the patient's fiduciary. A data broker can sell aggregate insight — but no patient trusts it. <b>The structural conflicts are baked into who they already answer to.</b> AiTHOS started from the boundary, so it answers only to the patient — and that's hard to retrofit.</p>
+    </div>
+
+    <div class="vs-grid">
+      <div class="vs-card vs-them">
+        <div class="vh">Incumbents (EHRs, AI scribes, brokers)</div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span>Model sees PHI → can't promise patients privacy, inherits AI-on-PHI liability</span></div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span>Serve providers/payers → can't be the patient's fiduciary</span></div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg><span>Retrofitting the boundary means rebuilding their core</span></div>
+      </div>
+      <div class="vs-card vs-us">
+        <div class="vh">AiTHOS</div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Coordination-without-access</b> — SAiRA orchestrates, never reads records</span></div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Patient is the principal</b> — the only party AiTHOS answers to</span></div>
+        <div class="vrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Built on §164.524</b> — the one disclosure path providers can't refuse</span></div>
+      </div>
+    </div>
+
+    <div class="moat-foot">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>
+      <span>Every tab in this demo is one expression of the same boundary: the patient sees everything, the concierge coordinates inside the secure record, the provider delivers but can't browse, the care team sees only what the patient shares, and the sponsor sees only aggregates. The moat isn't one feature — it's the architecture under all of them.</span>
+    </div>
+
+    <p class="footnote" style="margin-top:24px">AiTHOS · Sovereign Health Network · Phase 1 · Confidential — investor overview · Sponsor &amp; trial-recruitment model subject to counsel review</p>
+  </div>
+</section>
+
+  <!-- Healthograph artifact modal -->
+  <div id="healthographModal" class="rmodal" style="display:none" onclick="closeHealthograph(event)">
+    <div class="hgbox" onclick="event.stopPropagation()">
+      <button class="hgclose" onclick="closeHealthograph()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg></button>
+
+      <div class="hghead">
+        <div class="hgkicker">Your Healthograph</div>
+        <h2>Melanie Miles</h2>
+        <div class="hgowner">Your assembled health record — organized, complete, and <b>yours</b>.</div>
+        <div class="hgmeta">
+          <span>Assembled <b>May 15, 2026</b></span>
+          <span><b>5 sources</b> · all complete</span>
+          <span>Shared with <b>1 person</b></span>
+        </div>
+      </div>
+
+      <div class="hgsec">
+        <h3>Where these records came from</h3>
+        <p class="hgdesc">Every place that holds part of your health story, gathered with your authorization and in one file. Tap any source to open the records themselves.</p>
+        <div class="hgtl">
+          <div class="hgtlitem"><div class="hgsrc">Regional Medical Center</div><div class="hgmd"><b>Hospital</b> · Apr 28, 2026 · 14 documents</div></div>
+          <div class="hgtlitem"><div class="hgsrc">Bayside Family Practice</div><div class="hgmd"><b>Primary care</b> · May 6, 2026 · 22 documents</div></div>
+          <div class="hgtlitem"><div class="hgsrc">Meridian Diagnostics Lab</div><div class="hgmd"><b>Laboratory</b> · May 14, 2026 · 8 results</div></div>
+          <div class="hgtlitem"><div class="hgsrc">Cedar Imaging Center</div><div class="hgmd"><b>Imaging</b> · May 9, 2026 · 3 studies</div></div>
+          <div class="hgtlitem"><div class="hgsrc">Lakeside Cardiology</div><div class="hgmd"><b>Specialist</b> · May 11, 2026 · 6 visit notes</div></div>
+        </div>
+      </div>
+
+      <div class="hgsec">
+        <h3>What's in your file, by topic</h3>
+        <p class="hgdesc">A table of contents to your own records, so you can find things and bring informed questions to your care team. Each topic is just a category — your clinicians read the contents.</p>
+        <div class="hgtopics">
+          <div class="hgtopic">
+            <div class="htn">Heart function &amp; imaging</div>
+            <div class="htm">12 documents · 5 sources</div>
+            <div class="htd">Echocardiograms, EKGs, cardiology notes, imaging reports.</div>
+          </div>
+          <div class="hgtopic">
+            <div class="htn">Medications &amp; prescriptions</div>
+            <div class="htm">9 entries · 3 sources</div>
+            <div class="htd">Current and historical medications and any prescriber notes attached.</div>
+          </div>
+          <div class="hgtopic">
+            <div class="htn">Lab results</div>
+            <div class="htm">8 results · 1 source</div>
+            <div class="htd">Bloodwork from the past 18 months, organized by date.</div>
+          </div>
+          <div class="hgtopic">
+            <div class="htn">Visits &amp; encounters</div>
+            <div class="htm">24 visits · 4 sources</div>
+            <div class="htd">Every documented appointment, with date, provider, and reason for visit.</div>
+          </div>
+        </div>
+        <p class="hgtopic-note">Topic names only — never AiTHOS's interpretation of what your records mean. Your care team reads the contents and decides what they show.</p>
+      </div>
+
+      <div class="hgsec">
+        <h3>Questions you're preparing</h3>
+        <p class="hgdesc">Questions you've drafted with Chandler's help, ready for your next cardiology visit. SAiRA helped sharpen the wording — the questions are yours.</p>
+        <div class="hgqs">
+          <div class="hgq">What does my most recent ejection fraction reading mean for my day-to-day activity?</div>
+          <div class="hgq">Should I be on a different medication or dose given my last 3 months of readings?</div>
+          <div class="hgq">When would you reassess whether I'm a candidate for a procedure versus medication management?</div>
+          <div class="hgq">What signs at home would tell me I should call you sooner rather than wait?</div>
+        </div>
+        <button class="hgq-add"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>Add a question</button>
+      </div>
+
+      <div class="hgshare">
+        <div class="hgshare-row">
+          <button class="primary" onclick="shareToCareTeam()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 12h4M12 16v4M8 12H4M12 8V4" stroke-linecap="round"/><circle cx="12" cy="12" r="3"/></svg>Share with my care team</button>
+          <button><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 19h16" stroke-linecap="round" stroke-linejoin="round"/></svg>Download PDF</button>
+          <button><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg>History</button>
+        </div>
+        <p class="hgclosing"><b>This is yours.</b> Share it, update it, take it with you if you ever leave. AiTHOS organizes — your care team interprets.</p>
+      </div>
+    </div>
+  </div>
+<script>
+function toggleRail(id){
+  document.getElementById(id||'pshell').classList.toggle('railhidden');
+}
+function toggleSubjects(id){
+  document.getElementById(id||'cshell').classList.toggle('subjhidden');
+}
+function selectItem(shellId, el, panelKey){
+  var shell = document.getElementById(shellId);
+  if(!shell) return;
+  shell.querySelectorAll('.subjitem').forEach(function(i){ i.classList.remove('on'); });
+  el.classList.add('on');
+  shell.querySelectorAll('.panel').forEach(function(p){
+    p.style.display = (p.getAttribute('data-panel')===panelKey) ? '' : 'none';
+  });
+}
+var SPON_DATA = {
+  '30':  { label:'Last 30 days', elig:74, off:68, opt:57, act:46, prep:42,
+           cons:9, scr:6, rand:3 },
+  'q':   { label:'This quarter', elig:312, off:284, opt:240, act:198, prep:182,
+           cons:38, scr:21, rand:12 },
+  'all': { label:'All time', elig:486, off:441, opt:372, act:305, prep:281,
+           cons:58, scr:33, rand:19 }
+};
+function pct(n,d){ return d? Math.round(n/d*100)+'%' : '—'; }
+function setText(id,val){ var e=document.getElementById(id); if(e) e.textContent=val; }
+function setRange(r){
+  var d = SPON_DATA[r]; if(!d) return;
+  ['30','q','all'].forEach(function(k){
+    var btn=document.getElementById('rng-'+k); if(btn) btn.classList.toggle('on', k===r);
+  });
+  setText('m-elig', d.elig); setText('m-off', d.off); setText('m-opt', d.opt); setText('m-act', d.act);
+  setText('m-off-d', pct(d.off,d.elig)+' of eligible');
+  setText('m-opt-d', pct(d.opt,d.off)+' of offered');
+  setText('m-act-d', pct(d.act,d.opt)+' of opted-in');
+  var sr=document.getElementById('saira-range'); if(sr) sr.textContent = d.label.toLowerCase();
+  setText('t-cons', d.cons); setText('t-scr', d.scr); setText('t-rand', d.rand);
+  setText('t-captarget', d.rand + ' randomized');
+  setText('t-rangetag', d.label);
+}
+function openReport(key){
+  var m=document.getElementById('reportModal'); if(!m) return;
+  m.style.display='flex';
+  ['funnel','cohort','themes','gov','export'].forEach(function(k){
+    var p=document.getElementById('rm-'+k); if(p) p.style.display = (k===key)?'':'none';
+  });
+}
+function closeReport(e){
+  document.getElementById('reportModal').style.display='none';
+}
+function openHealthograph(){
+  var m=document.getElementById('healthographModal'); if(!m) return;
+  m.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeHealthograph(){
+  document.getElementById('healthographModal').style.display='none';
+  document.body.style.overflow='';
+}
+/* ===== Patient → Care Team live share ===== */
+function shareToCareTeam(){
+  // close the Healthograph modal first
+  closeHealthograph();
+  // switch to the Care Team tab
+  show('careteam');
+  // ensure the MM patient panel is the active one
+  var ctshell=document.getElementById('ctshell');
+  if(ctshell){
+    var mmItem=ctshell.querySelector('.subjitem:nth-child(1)');
+    if(mmItem){ selectItem('ctshell', mmItem, 'mm'); }
+  }
+  // reveal the layered share note, then animate it into view
+  setTimeout(function(){
+    var note=document.getElementById('mm-hgshare');
+    if(note){
+      note.style.display='block';
+      note.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    // bump the MM rail dot to fu (something just arrived for attention)
+    var mmDot=document.querySelector('#ctshell .subjitem:nth-child(1) .dot');
+    if(mmDot){ mmDot.className='dot dot-fu'; }
+  }, 280);
+}
+/* ===== S01 live demo flow ===== */
+var S01_LETTER = "To the Release of Information office,\n\nOn behalf of our patient and at their written direction, this is a follow-up to our request of April 22 under the patient's right of access (45 C.F.R. \u00a7164.524). The 30-day response window has now passed.\n\nPlease deliver the requested laboratory and pathology records via the secure AiTHOS channel provided. If anything is needed to complete this, reply here and I'll resolve it same day.\n\nThank you,\nAiTHOS \u00b7 on behalf of the patient";
+var s01Busy=false;
+function startS01Flow(){
+  if(s01Busy) return; s01Busy=true;
+  var btn=document.getElementById('s01-approve'); if(btn){btn.textContent='Drafting…';btn.disabled=true;btn.style.opacity=.6;}
+  var t=document.getElementById('s01-draftturn'); t.style.display='flex';
+  t.scrollIntoView({behavior:'smooth',block:'center'});
+  var target=document.getElementById('s01-drafttext'); target.innerHTML='<span class="cursor"></span>';
+  var i=0;
+  function type(){
+    if(i<=S01_LETTER.length){
+      target.innerHTML = S01_LETTER.slice(0,i).replace(/\n/g,'<br>') + '<span class="cursor"></span>';
+      i += Math.max(2, Math.round(S01_LETTER.length/90));
+      setTimeout(type, 18);
+    } else {
+      target.innerHTML = S01_LETTER.replace(/\n/g,'<br>');
+      document.getElementById('s01-drafttime').textContent='drafted · just now';
+      var a=document.getElementById('s01-draftactions'); a.style.display='flex';
+      a.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }
+  setTimeout(type, 350);
+}
+function editS01(){
+  var t=document.getElementById('s01-drafttext');
+  t.setAttribute('contenteditable','true');
+  t.style.outline='1px solid var(--teal)'; t.focus();
+}
+function sendS01(){
+  document.getElementById('s01-draftactions').style.display='none';
+  var sent=document.getElementById('s01-sentturn'); sent.style.display='flex';
+  sent.scrollIntoView({behavior:'smooth',block:'center'});
+  // after a beat, flip the tracker row and reveal the received turn
+  setTimeout(function(){
+    var status=document.getElementById('s01-labstatus');
+    status.textContent='Received'; status.className='st st-rc flip';
+    var row=document.getElementById('s01-labrow'); if(row) row.classList.add('done');
+    var spin=document.getElementById('s01-spinner'); if(spin) spin.style.display='none';
+    var msg=document.getElementById('s01-sendmsg'); if(msg) msg.textContent='Records received · logged to S01';
+    // update the left subject-rail dot for S01 to "ok"
+    var s01dot=document.querySelector('#cshell .subjitem:nth-child(1) .dot');
+    if(s01dot) s01dot.className='dot dot-ok';
+    var rec=document.getElementById('s01-receivedturn'); rec.style.display='flex';
+    rec.scrollIntoView({behavior:'smooth',block:'center'});
+    s01Busy=false;
+  }, 1600);
+}
+/* ===== Patient wall test: prove the boundary holds ===== */
+var pwallBusy=false;
+function askWallTest(){
+  if(pwallBusy) return; pwallBusy=true;
+  var q=document.getElementById('pwall-q'); q.style.display='flex';
+  q.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(function(){
+    var a=document.getElementById('pwall-a'); a.style.display='flex';
+    a.scrollIntoView({behavior:'smooth',block:'center'});
+    pwallBusy=false;
+  }, 900);
+}
+/* ===== Patient RPT opt-in: yes, add it ===== */
+var rptBusy=false;
+function addRPT(){
+  if(rptBusy) return; rptBusy=true;
+  // 1. mark the consent button as done — replace text with check, disable
+  var btn=document.getElementById('rpt-add-btn');
+  if(btn){
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" style="width:14px;height:14px;stroke:var(--navy);vertical-align:middle;margin-right:4px"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Added';
+    btn.disabled=true;
+    btn.style.cursor='default';
+  }
+  var prio=document.getElementById('rpt-prio-add');
+  if(prio){ prio.style.opacity='.78'; }
+  // 2. open the Assets rail so the consequence is visible
+  var pshell=document.getElementById('pshell');
+  if(pshell && pshell.classList.contains('railhidden')){
+    pshell.classList.remove('railhidden');
+  }
+  // 3. update the RPT entry in the Assets rail
+  var asset=document.getElementById('rpt-asset');
+  var status=document.getElementById('rpt-asset-status');
+  if(asset && status){
+    asset.classList.add('rpt-added');
+    status.innerHTML='Active <span class="rpt-pulse">Just added</span>';
+  }
+  // 4. reveal SAiRA's confirmation turn
+  setTimeout(function(){
+    var c=document.getElementById('rpt-confirm');
+    if(c){
+      c.style.display='flex';
+      c.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    rptBusy=false;
+  }, 380);
+}
+function show(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('show'));
+  document.getElementById(v).classList.add('show');
+  document.getElementById('t-patient').classList.toggle('on',v==='patient');
+  document.getElementById('t-concierge').classList.toggle('on',v==='concierge');
+  document.getElementById('t-admin').classList.toggle('on',v==='admin');
+  document.getElementById('t-sponsor').classList.toggle('on',v==='sponsor');
+  document.getElementById('t-careteam').classList.toggle('on',v==='careteam');
+  document.getElementById('t-moat').classList.toggle('on',v==='moat');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
